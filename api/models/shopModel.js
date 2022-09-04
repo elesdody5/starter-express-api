@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-// let uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require("mongoose");
 const shopSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -21,12 +20,12 @@ const shopSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
   },
   //Refers to main category
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
+    ref: "Category",
   },
   from: {
     type: Date,
@@ -45,5 +44,5 @@ const shopSchema = new mongoose.Schema({
 });
 
 // shopSchema.plugin(uniqueValidator);
-const Shop = new mongoose.model('Shop', shopSchema);
+const Shop = new mongoose.model("Shop", shopSchema);
 module.exports = Shop;
