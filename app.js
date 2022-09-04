@@ -15,6 +15,7 @@ const reviewRouter = require("./api/routes/reviewRouter");
 const AppError = require("./api/utils/appError");
 
 const app = express();
+app.use(compression());
 app.use(express.urlencoded({ extended: true }));
 //core middlewares
 app.use(express.json());
@@ -24,7 +25,6 @@ const globalErrorHandler = require("./api/controllers/errorController");
 //test
 //Implement cors and compression
 app.use(cors());
-app.use(compression());
 
 app.options("*", cors());
 app.use("/api/v1/users", userRouter); //Request will hit this first and then match with one of userRouters.
@@ -45,5 +45,11 @@ app.all("*", (req, res, next) => {
   next(new AppError(`Cant find ${req.originalUrl} on the server`, 404));
 });
 
+app.get("*.js", function (req, res, next) {
+  req.url = req.url + ".gz";
+  res.set("Content-Encoding", "gz
+  ip");
+  next();
+});
 app.use(globalErrorHandler);
 module.exports = app;
