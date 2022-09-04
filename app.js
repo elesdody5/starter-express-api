@@ -9,8 +9,6 @@ const offerRouter = require("./api/routes/offerRouter");
 const subCategoriesRouter = require("./api/routes/subCategoryRouter");
 const serviceRouter = require("./api/routes/serviceRouter");
 const favoriteRouter = require("./api/routes/favoriteRouter");
-const orderRouter = require("./api/routes/orderRouter");
-const cartRouter = require("./api/routes/cartRouter");
 const quickOrderRouter = require("./api/routes/quickOrderRouter");
 const notificationRouter = require("./api/routes/notificationRouter");
 const reviewRouter = require("./api/routes/reviewRouter");
@@ -37,9 +35,7 @@ app.use("/api/v1/subCategories", subCategoriesRouter); //Request will hit this f
 app.use("/api/v1/offers", offerRouter); //Request will hit this first and then match with one of offersRouter
 app.use("/api/v1/services", serviceRouter); //Request will hit this first and then match with one of serviceRouter
 app.use("/api/v1/favorites", favoriteRouter); //Request will hit this first and then match with one of favorites router
-app.use("/api/v1/orders", orderRouter); //Request will hit this first and then match with one of orders router
-app.use("/api/v1/carts", cartRouter); //Request will hit this first and then match with one of carts router
-app.use("/api/v1/quickOrders", quickOrderRouter); //Request will hit this first and then match with one of carts router
+app.use("/api/v1/quickOrders", quickOrderRouter); //Request will hit this first and then match with one of quickorders router
 app.use("/api/v1/notifications", notificationRouter); //Request will hit this first and then match with one of notification router
 app.use("/api/v1/reviews", reviewRouter); //Request will hit this first and then match with one of review router
 //If there is no matching route this middleware will be FIRED!
