@@ -23,21 +23,26 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
 //@route DELETE /api/v1/quickOrders/
 //access PUBLIC
 exports.deleteQuickOrder = catchAsync(async (req, res, next) => {
-  console.log("hi");
   let { quickOrderId } = req.query;
-  await QuickOrder.findOneAndDelete({
+  let deletedQuickOrder = await QuickOrder.findOneAndDelete({
     _id: quickOrderId,
   });
 
   let foundRecord = await Record.findOne({ quickOrder: quickOrderId });
 
-  cloudinary.uploader
-    .destroy(foundRecord.public_id, { resource_type: "video" })
-    .then((result, err) => {
-      res.status(200).json({
-        status: "success",
+  if (foundRecord) {
+    cloudinary.uploader
+      .destroy(foundRecord.public_id, { resource_type: "video" })
+      .then((result, err) => {
+        res.status(200).json({
+          status: "success",
+        });
       });
+  } else {
+    res.status(200).json({
+      status: "success",
     });
+  }
 });
 //@desc Get quick order by passing quick order ID
 //@route GET /api/v1/quickOrders/
@@ -121,6 +126,21 @@ exports.deleteMultipleQuickOrders = catchAsync(async (req, res, next) => {
     return next(new AppError(ErrorMsgs.INVALID_QUICK_ORDERS, 400));
   }
   let { quickOrders } = req.body;
+  let public_ids = [];
+  for (let i = 0; i < quickOrders.length; i++) {
+    let foundRecord = await Record.findOne({ quickOrder: quickOrders[i] });
+    if (foundRecord) {
+      public_ids.push(foundRecord.public_id);
+    }
+  }
+
+  //Public_ids are array of the records to be deleted => we delete through the public_id
+  if (public_ids.length) {
+    await cloudinary.api.delete_resources(public_ids, {
+      resource_type: "video",
+    });
+  }
+
   let deletedQuickOrder = await QuickOrder.deleteMany({
     _id: {
       $in: quickOrders,
