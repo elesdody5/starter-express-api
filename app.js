@@ -12,6 +12,7 @@ const favoriteRouter = require("./api/routes/favoriteRouter");
 const quickOrderRouter = require("./api/routes/quickOrderRouter");
 const notificationRouter = require("./api/routes/notificationRouter");
 const reviewRouter = require("./api/routes/reviewRouter");
+const recordRouter = require("./api/routes/recordRouter");
 const AppError = require("./api/utils/appError");
 
 const app = express();
@@ -38,17 +39,19 @@ app.use("/api/v1/favorites", favoriteRouter); //Request will hit this first and 
 app.use("/api/v1/quickOrders", quickOrderRouter); //Request will hit this first and then match with one of quickorders router
 app.use("/api/v1/notifications", notificationRouter); //Request will hit this first and then match with one of notification router
 app.use("/api/v1/reviews", reviewRouter); //Request will hit this first and then match with one of review router
+app.use("/api/v1/records", recordRouter); //Request will hit this first and then match with one of record router
 //If there is no matching route this middleware will be FIRED!
 app.all("*", (req, res, next) => {
   /*if next took an argument -> express will detect that there is an error and will skip all the middlewares 
     and goes to the GLOBAL ERROR HANDLER*/
   next(new AppError(`Cant find ${req.originalUrl} on the server`, 404));
 });
-
-app.get("*.js", function (req, res, next) {
-  req.url = req.url + ".gz";
-  res.set("Content-Encoding", "gzip");
-  next();
-});
 app.use(globalErrorHandler);
+
+// app.get("*.js", function (req, res, next) {
+//   req.url = req.url + ".gz";
+//   res.set("Content-Encoding", "gzip");
+//   next();
+// });
+
 module.exports = app;
