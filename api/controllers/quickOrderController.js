@@ -23,6 +23,7 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
 //@route DELETE /api/v1/quickOrders/
 //access PUBLIC
 exports.deleteQuickOrder = catchAsync(async (req, res, next) => {
+  console.log("hi");
   let { quickOrderId } = req.query;
   await QuickOrder.findOneAndDelete({
     _id: quickOrderId,
