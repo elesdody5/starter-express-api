@@ -29,7 +29,9 @@ exports.addReview = catchAsync(async (req, res, next) => {
 exports.getAllReviewsForAdelivery = catchAsync(async (req, res, next) => {
   let reviewsForSpecificDelivery = await Review.find({
     delivery: req.query.deliveryId,
-  });
+  })
+    .populate("reviewPoster")
+    .exec();
   res.status(200).json({
     status: "success",
     review: reviewsForSpecificDelivery,
