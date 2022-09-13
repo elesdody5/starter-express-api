@@ -110,20 +110,26 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     });
 
     let data = [];
-
-    quickOrders.map((quickOrder) => {
-      foundRecords.forEach((foundRecord) => {
-        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
-          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
-        } else {
-          data.push({ ...quickOrder._doc });
-        }
+    if (foundRecords.length === 0) {
+      res.status(200).json({
+        status: "success",
+        data: quickOrders,
       });
-    });
-    res.status(200).json({
-      status: "success",
-      data,
-    });
+    } else {
+      quickOrders.map((quickOrder) => {
+        foundRecords.forEach((foundRecord) => {
+          if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+            data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+          } else {
+            data.push({ ...quickOrder._doc });
+          }
+        });
+      });
+      res.status(200).json({
+        status: "success",
+        data,
+      });
+    }
   } else {
     let quickOrders = await QuickOrder.find({
       delivery: null,
@@ -139,20 +145,27 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
 
     let data = [];
 
-    quickOrders.map((quickOrder) => {
-      foundRecords.forEach((foundRecord) => {
-        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
-          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
-        } else {
-          data.push({ ...quickOrder._doc });
-        }
+    if (foundRecords.length === 0) {
+      res.status(200).json({
+        status: "success",
+        data: quickOrders,
       });
-    });
+    } else {
+      quickOrders.map((quickOrder) => {
+        foundRecords.forEach((foundRecord) => {
+          if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+            data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+          } else {
+            data.push({ ...quickOrder._doc });
+          }
+        });
+      });
 
-    res.status(200).json({
-      status: "success",
-      data: data,
-    });
+      res.status(200).json({
+        status: "success",
+        data,
+      });
+    }
   }
 });
 //@desc Get all quick orders
@@ -171,22 +184,27 @@ exports.getAllQuickOrders = catchAsync(async (req, res, next) => {
     },
   });
   let data = [];
-  quickOrders.map((quickOrder) => {
-    foundRecords.forEach((foundRecord) => {
-      if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
-        data.push({ ...quickOrder._doc, audio: foundRecord.audio });
-      } else {
-        data.push({ ...quickOrder._doc });
-      }
+  if (foundRecords.length === 0) {
+    res.status(200).json({
+      status: "success",
+      data: quickOrders,
     });
-  });
+  } else {
+    quickOrders.map((quickOrder) => {
+      foundRecords.forEach((foundRecord) => {
+        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+        } else {
+          data.push({ ...quickOrder._doc });
+        }
+      });
+    });
 
-  console.log(data);
-
-  res.status(200).json({
-    status: "success",
-    data,
-  });
+    res.status(200).json({
+      status: "success",
+      data,
+    });
+  }
 });
 
 //@desc Delete multiple quick orders
@@ -238,20 +256,28 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
   });
 
   let data = [];
-  //Matching the Audio URL from record schema to the correlated quickorder
-  quickOrders.map((quickOrder) => {
-    foundRecords.forEach((foundRecord) => {
-      if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
-        data.push({ ...quickOrder._doc, audio: foundRecord.audio });
-      } else {
-        data.push({ ...quickOrder._doc });
-      }
-    });
-  });
 
-  res.status(200).json({
-    status: "success",
-    count: quickOrders.length,
-    data,
-  });
+  if (foundRecords.length === 0) {
+    res.status(200).json({
+      status: "success",
+      count: quickOrders.length,
+      data: quickOrders,
+    });
+  } else {
+    //Matching the Audio URL from record schema to the correlated quickorder
+    quickOrders.map((quickOrder) => {
+      foundRecords.forEach((foundRecord) => {
+        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+        } else {
+          data.push({ ...quickOrder._doc });
+        }
+      });
+    });
+    res.status(200).json({
+      status: "success",
+      count: quickOrders.length,
+      data,
+    });
+  }
 });
