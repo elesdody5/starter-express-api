@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const quickOrderSchema = new mongoose.Schema({
   address: {
@@ -9,7 +9,7 @@ const quickOrderSchema = new mongoose.Schema({
   },
   delivery: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     default: null,
   },
   userPhone: {
@@ -20,7 +20,7 @@ const quickOrderSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     default: null,
   },
   status: {
@@ -39,5 +39,5 @@ const quickOrderSchema = new mongoose.Schema({
   photo: { type: String },
 });
 
-const QuickOrder = new mongoose.model('QuickOrder', quickOrderSchema);
+const QuickOrder = new mongoose.model("QuickOrder", quickOrderSchema);
 module.exports = QuickOrder;

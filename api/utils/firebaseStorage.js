@@ -134,6 +134,7 @@ exports.handleUpdatingAndStoringElement = catchAsync(
         : Model === QuickOrder
         ? req.query.quickOrderId
         : (id = id);
+
     if (!req.file) {
       let updatedElement = await Model.findOneAndUpdate({ _id: id }, req.body, {
         new: true,
@@ -144,6 +145,7 @@ exports.handleUpdatingAndStoringElement = catchAsync(
         status: "success",
         updatedElement,
       });
+      requestAnimationFrame;
     } else {
       const blob = bucket.file(`${schemaType}/${req.file.originalname}`);
       const blobStream = blob.createWriteStream();

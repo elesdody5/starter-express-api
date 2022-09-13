@@ -10,6 +10,7 @@ const {
   handleStoringImageAndCreatingElement,
   handleUpdatingAndStoringElement,
 } = require("../utils/firebaseStorage");
+const { arrayBuffer } = require("stream/consumers");
 
 //@desc Add quick order and notify all delivery boys
 //@route POST /api/v1/quickOrders/
@@ -54,10 +55,22 @@ exports.getQuickOrderById = catchAsync(async (req, res, next) => {
   })
     .populate("user")
     .populate("delivery");
-  res.status(200).json({
-    status: "success",
-    foundQuickOrder,
-  });
+  let data;
+
+  let foundRecord = await Record.findOne({ quickOrder: quickOrderId });
+
+  if (foundRecord) {
+    data = { ...foundQuickOrder._doc, audio: foundRecord.audio };
+    res.status(200).json({
+      status: "success",
+      data,
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+      foundQuickOrder,
+    });
+  }
 });
 //@desc Update quick order by passing quick order ID and deliveryId
 //@route GET /api/v1/quickOrders/
@@ -88,9 +101,28 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     })
       .populate("delivery")
       .populate("user");
+
+    let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
+    let foundRecords = await Record.find({
+      quickOrder: {
+        $in: quickOrderIds,
+      },
+    });
+
+    let data = [];
+
+    quickOrders.map((quickOrder) => {
+      foundRecords.forEach((foundRecord) => {
+        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+        } else {
+          data.push({ ...quickOrder._doc });
+        }
+      });
+    });
     res.status(200).json({
       status: "success",
-      quickOrders,
+      data,
     });
   } else {
     let quickOrders = await QuickOrder.find({
@@ -98,9 +130,28 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     })
       .populate("delivery")
       .populate("user");
+    let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
+    let foundRecords = await Record.find({
+      quickOrder: {
+        $in: quickOrderIds,
+      },
+    });
+
+    let data = [];
+
+    quickOrders.map((quickOrder) => {
+      foundRecords.forEach((foundRecord) => {
+        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+        } else {
+          data.push({ ...quickOrder._doc });
+        }
+      });
+    });
+
     res.status(200).json({
       status: "success",
-      quickOrders,
+      data: data,
     });
   }
 });
@@ -112,9 +163,29 @@ exports.getAllQuickOrders = catchAsync(async (req, res, next) => {
     .populate("user")
     .populate("delivery");
 
+  let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
+
+  let foundRecords = await Record.find({
+    quickOrder: {
+      $in: quickOrderIds,
+    },
+  });
+  let data = [];
+  quickOrders.map((quickOrder) => {
+    foundRecords.forEach((foundRecord) => {
+      if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+        data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+      } else {
+        data.push({ ...quickOrder._doc });
+      }
+    });
+  });
+
+  console.log(data);
+
   res.status(200).json({
     status: "success",
-    quickOrders,
+    data,
   });
 });
 
@@ -158,10 +229,29 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
   let quickOrders = await QuickOrder.find({ user: userId }).populate(
     "delivery"
   );
+  let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
+
+  let foundRecords = await Record.find({
+    quickOrder: {
+      $in: quickOrderIds,
+    },
+  });
+
+  let data = [];
+  //Matching the Audio URL from record schema to the correlated quickorder
+  quickOrders.map((quickOrder) => {
+    foundRecords.forEach((foundRecord) => {
+      if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+        data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+      } else {
+        data.push({ ...quickOrder._doc });
+      }
+    });
+  });
 
   res.status(200).json({
     status: "success",
     count: quickOrders.length,
-    quickOrders,
+    data,
   });
 });
