@@ -145,7 +145,6 @@ exports.handleUpdatingAndStoringElement = catchAsync(
         status: "success",
         updatedElement,
       });
-      requestAnimationFrame;
     } else {
       const blob = bucket.file(`${schemaType}/${req.file.originalname}`);
       const blobStream = blob.createWriteStream();
