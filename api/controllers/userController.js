@@ -325,7 +325,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       msg: req.body.msg,
       title: req.body.title,
       metadata: req.body.metadata,
-      type: "announcement",
+      type: req.body.type,
     },
     topic: "users",
   };

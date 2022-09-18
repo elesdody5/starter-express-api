@@ -11,6 +11,7 @@ const {
   handleUpdatingAndStoringElement,
 } = require("../utils/firebaseStorage");
 const { arrayBuffer } = require("stream/consumers");
+const { join } = require("path");
 
 //@desc Add quick order and notify all delivery boys
 //@route POST /api/v1/quickOrders/
@@ -60,7 +61,18 @@ exports.getQuickOrderById = catchAsync(async (req, res, next) => {
   let foundRecord = await Record.findOne({ quickOrder: quickOrderId });
 
   if (foundRecord) {
-    data = { ...foundQuickOrder._doc, audio: foundRecord.audio };
+    console.log(
+      foundRecord.audio.split(":")[0] +
+        "s:/" +
+        join(foundRecord.audio.split(":")[1])
+    );
+    data = {
+      ...foundQuickOrder._doc,
+      audio:
+        foundRecord.audio.split(":")[0] +
+        "s:/" +
+        join(foundRecord.audio.split(":")[1]),
+    };
     res.status(200).json({
       status: "success",
       data,
