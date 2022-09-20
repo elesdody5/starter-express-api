@@ -324,10 +324,10 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   const payload = {
     data: {
-      msg: req.body.msg,
-      title: req.body.title,
-      metadata: req.body.metadata || "",
-      type: req.body.type || "",
+      msg: String(req.body.msg) || "",
+      title: String(req.body.title) || "",
+      metadata: String(req.body.metadata) || "",
+      type: String(req.body.type) || "",
     },
   };
   if (notificationToken) {
