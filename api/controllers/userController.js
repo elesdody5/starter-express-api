@@ -318,20 +318,22 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
 });
 exports.notifySingleUser = catchAsync(async (req, res, next) => {
   let userId = req.query.userId;
-  const user = await User.findOne({ id: userId });
+  const user = await User.findOne({ _id: userId });
 
   let notificationToken = user.notificationToken;
 
-  const payload = {
+  const message = {
     data: {
       msg: req.body.msg,
       title: req.body.title,
-      metadata: req.body.metadata,
-      type: req.body.type,
+      metadata: String(req.body.metadata),
+      type: String(req.body.type),
     },
-    topic: "users",
   };
   if (notificationToken) {
-    sendNotification(notificationToken, payload);
+    sendNotification(notificationToken, message);
+    res.status(200).json({
+      status: "success",
+    });
   }
 });
