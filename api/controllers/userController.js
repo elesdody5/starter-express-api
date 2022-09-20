@@ -319,7 +319,9 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
 exports.notifySingleUser = catchAsync(async (req, res, next) => {
   let userId = req.query.userId;
   const user = await User.findOne({ id: userId });
+
   let notificationToken = user.notificationToken;
+
   const payload = {
     data: {
       msg: req.body.msg,
@@ -329,6 +331,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
     },
     topic: "users",
   };
-
-  sendNotification(notificationToken, payload);
+  if (notificationToken) {
+    sendNotification(notificationToken, payload);
+  }
 });
