@@ -61,17 +61,9 @@ exports.getQuickOrderById = catchAsync(async (req, res, next) => {
   let foundRecord = await Record.findOne({ quickOrder: quickOrderId });
 
   if (foundRecord) {
-    console.log(
-      foundRecord.audio.split(":")[0] +
-        "s:/" +
-        join(foundRecord.audio.split(":")[1])
-    );
     data = {
       ...foundQuickOrder._doc,
-      audio:
-        foundRecord.audio.split(":")[0] +
-        "s:/" +
-        join(foundRecord.audio.split(":")[1]),
+      audio: foundRecord.audio,
     };
     res.status(200).json({
       status: "success",
@@ -189,7 +181,7 @@ exports.getAllQuickOrders = catchAsync(async (req, res, next) => {
     .populate("delivery");
 
   let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
-
+  let mySet = new Set();
   let foundRecords = await Record.find({
     quickOrder: {
       $in: quickOrderIds,
@@ -211,10 +203,21 @@ exports.getAllQuickOrders = catchAsync(async (req, res, next) => {
         }
       });
     });
+    const uniqueElements = [];
+    let filteredData = data.filter((element) => {
+      const isDuplicate = uniqueElements.includes(element._id);
 
+      if (!isDuplicate) {
+        uniqueElements.push(element._id);
+
+        return true;
+      }
+
+      return false;
+    });
     res.status(200).json({
       status: "success",
-      data,
+      data: filteredData,
     });
   }
 });
