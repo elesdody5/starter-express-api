@@ -301,15 +301,18 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
     .filter((token) => token);
   const message = {
     data: {
-      msg: req.body.msg,
-      title: req.body.title,
+      msg: String(req.body.msg) || "",
+      title: String(req.body.title) || "",
       type: "announcement",
     },
-    topic: "users",
+    // topic: "users",
   };
 
   if (userRegistrationTokens.length > 0) {
-    sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    // sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    for (let i = 0; i < userRegistrationTokens.length; i++) {
+      await sendNotification(userRegistrationTokens[i], message);
+    }
     await Notification.create(req.body);
   }
   res.status(200).json({
