@@ -7,13 +7,13 @@ admin.initializeApp({
 });
 
 //This function takes notification token and payload and it sends notification to a proper device
-exports.sendNotification = (notificationToken, payload) => {
+exports.sendNotification = async (notificationToken, payload) => {
   var options = {
     priority: "high",
     timeToLive: 60 * 60 * 24,
   };
 
-  admin
+  await admin
     .messaging()
     .sendToDevice(notificationToken, payload, options)
     .then((response1) => {
