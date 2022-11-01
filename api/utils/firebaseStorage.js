@@ -54,16 +54,16 @@ exports.handleStoringImageAndCreatingElement = catchAsync(
       case "services":
         Model = Service;
         break;
-      case "quickOrders":
-        Model = QuickOrder;
-        break;
+      // case "quickOrders":
+      //   Model = QuickOrder;
+      //   break;
     }
 
     if (!req.file) {
       let createdElement = await Model.create(req.body);
-      if (Model === QuickOrder) {
-        handleSendingQuickOrderNotifications(req, res);
-      }
+      // if (Model === QuickOrder) {
+      //   handleSendingQuickOrderNotifications(req, res);
+      // }
       res.status(200).json({
         status: "success",
         createdElement,
@@ -80,9 +80,9 @@ exports.handleStoringImageAndCreatingElement = catchAsync(
       let photoUrl = `https://storage.googleapis.com/${bucket.name}/${schemaType}/${req.file.originalname}`;
       let wholeBody = { ...req.body, photo: photoUrl };
       let createdElement = await Model.create(wholeBody);
-      if (Model === QuickOrder) {
-        handleSendingQuickOrderNotifications(req, res);
-      }
+      // if (Model === QuickOrder) {
+      //   handleSendingQuickOrderNotifications(req, res);
+      // }
       res.status(200).json({
         status: "success",
         createdElement,

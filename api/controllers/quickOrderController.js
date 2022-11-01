@@ -19,7 +19,68 @@ const { join } = require("path");
 //NOTE we pass here the user who made the quick order in the body of the req.
 exports.addQuickOrder = catchAsync(async (req, res, next) => {
   // let quickOrder = await QuickOrder.create(req.body);
-  handleStoringImageAndCreatingElement("quickOrders", req, res);
+  // handleStoringImageAndCreatingElement("quickOrders", req, res);
+
+  if (!req.file) {
+    let createdElement = await QuickOrder.create(req.body);
+
+    // handleSendingQuickOrderNotifications(req, res);
+
+    const users = await User.find({ userType: "delivery" });
+    const userRegistrationTokens = users
+      .map((user) => user.notificationToken)
+      .filter((token) => token);
+    // Will be sent to all the delivery in the system
+    const message = {
+      data: {
+        userType: req.query.userType,
+        type: "quickOrder",
+      },
+      topic: "users",
+    };
+    if (userRegistrationTokens.length > 0) {
+      sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    }
+
+    res.status(200).json({
+      status: "success",
+      createdElement,
+    });
+  } else {
+    const blob = bucket.file(`${schemaType}/${req.file.originalname}`);
+    const blobStream = blob.createWriteStream();
+    blobStream.on("finish", async () => {
+      // The public URL can be used to directly access the file via HTTP.
+      publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+    });
+    let photoUrl = `https://storage.googleapis.com/${bucket.name}/${schemaType}/${req.file.originalname}`;
+    let wholeBody = { ...req.body, photo: photoUrl };
+    let createdElement = await QuickOrder.create(wholeBody);
+
+    const users = await User.find({ userType: "delivery" });
+    const userRegistrationTokens = users
+      .map((user) => user.notificationToken)
+      .filter((token) => token);
+    // Will be sent to all the delivery in the system
+    const message = {
+      data: {
+        userType: req.query.userType,
+        type: "quickOrder",
+      },
+      topic: "users",
+    };
+    if (userRegistrationTokens.length > 0) {
+      sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    }
+
+    res.status(200).json({
+      status: "success",
+      createdElement,
+    });
+    blobStream.end(req.file.buffer);
+  }
 });
 //@desc Delete quick order by passing quick order ID
 //@route DELETE /api/v1/quickOrders/
