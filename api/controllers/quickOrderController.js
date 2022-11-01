@@ -57,7 +57,7 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
         userType: String(req.query.userType),
         type: "quickOrder",
       },
-      topic: "users",
+      // topic: "users",
     };
     if (userRegistrationTokens.length > 0) {
       for (let i = 0; i < userRegistrationTokens.length; i++) {
@@ -90,10 +90,10 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     // Will be sent to all the delivery in the system
     const message = {
       data: {
-        userType: req.query.userType,
+        userType: String(req.query.userType) || "",
         type: "quickOrder",
       },
-      topic: "users",
+      // topic: "users",
     };
     if (userRegistrationTokens.length > 0) {
       for (let i = 0; i < userRegistrationTokens.length; i++) {
