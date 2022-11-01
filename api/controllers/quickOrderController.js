@@ -14,29 +14,33 @@ const {
 const { arrayBuffer } = require("stream/consumers");
 const { join } = require("path");
 
-
-exports.handleSendNotificationAndCreateElement = (createdElement) => {
+exports.handleSendNotificationAndCreateElement = async (createdElement) => {
   const users = await User.find({ userType: "delivery" });
-    const userRegistrationTokens = users
-      .map((user) => user.notificationToken)
-      .filter((token) => token);
-    // Will be sent to all the delivery in the system
-    const message = {
-      data: {
-        userType: req.query.userType,
-        type: "quickOrder",
-      },
-      topic: "users",
-    };
-    if (userRegistrationTokens.length > 0) {
-       await sendMultipleNotification(userRegistrationTokens, message, "users", res);
-    }
+  const userRegistrationTokens = users
+    .map((user) => user.notificationToken)
+    .filter((token) => token);
+  // Will be sent to all the delivery in the system
+  const message = {
+    data: {
+      userType: req.query.userType,
+      type: "quickOrder",
+    },
+    topic: "users",
+  };
+  if (userRegistrationTokens.length > 0) {
+    await sendMultipleNotification(
+      userRegistrationTokens,
+      message,
+      "users",
+      res
+    );
+  }
 
-    res.status(200).json({
-      status: "success",
-      createdElement,
-    });
-}
+  res.status(200).json({
+    status: "success",
+    createdElement,
+  });
+};
 
 //@desc Add quick order and notify all delivery boys
 //@route POST /api/v1/quickOrders/
@@ -49,9 +53,9 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
   if (!req.file) {
     let createdElement = await QuickOrder.create(req.body);
 
-    handleSendNotificationAndCreateElement(createdElement)
+    handleSendNotificationAndCreateElement(createdElement);
     // handleSendingQuickOrderNotifications(req, res);
-    
+
     // const users = await User.find({ userType: "delivery" });
     // const userRegistrationTokens = users
     //   .map((user) => user.notificationToken)
@@ -101,7 +105,7 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     // if (userRegistrationTokens.length > 0) {
     //   sendMultipleNotification(userRegistrationTokens, message, "users", res);
     // }
-    handleSendNotificationAndCreateElement(createdElement)
+    handleSendNotificationAndCreateElement(createdElement);
     // res.status(200).json({
     //   status: "success",
     //   createdElement,
