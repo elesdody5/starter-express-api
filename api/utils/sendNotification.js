@@ -27,7 +27,7 @@ exports.sendMultipleNotification = async (
   topic,
   res
 ) => {
-  admin
+  await admin
     .messaging()
     .subscribeToTopic(registrationTokens, topic)
     .then((response) => {
@@ -41,7 +41,7 @@ exports.sendMultipleNotification = async (
 
   // Send a message to devices subscribed to the provided topic.
 
-  admin
+  await admin
     .messaging()
     .send(message)
     .then((response) => {
