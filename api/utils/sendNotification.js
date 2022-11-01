@@ -21,7 +21,7 @@ exports.sendNotification = (notificationToken, payload) => {
     })
     .catch((err) => console.log("Error in sending message", err));
 };
-exports.sendMultipleNotification = (
+exports.sendMultipleNotification = async (
   registrationTokens,
   message,
   topic,

@@ -5,6 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("./../utils/ErrorMsgsConstants");
 const Record = require("../models/recordModel");
 const cloudinary = require("../utils/cloudinaryConfiguration");
+const Notification = require("./../models/notificationModel");
 const { sendMultipleNotification } = require("../utils/sendNotification");
 const {
   handleStoringImageAndCreatingElement,
@@ -13,20 +14,9 @@ const {
 const { arrayBuffer } = require("stream/consumers");
 const { join } = require("path");
 
-//@desc Add quick order and notify all delivery boys
-//@route POST /api/v1/quickOrders/
-//access PUBLIC
-//NOTE we pass here the user who made the quick order in the body of the req.
-exports.addQuickOrder = catchAsync(async (req, res, next) => {
-  // let quickOrder = await QuickOrder.create(req.body);
-  // handleStoringImageAndCreatingElement("quickOrders", req, res);
 
-  if (!req.file) {
-    let createdElement = await QuickOrder.create(req.body);
-
-    // handleSendingQuickOrderNotifications(req, res);
-
-    const users = await User.find({ userType: "delivery" });
+exports.handleSendNotificationAndCreateElement = (createdElement) => {
+  const users = await User.find({ userType: "delivery" });
     const userRegistrationTokens = users
       .map((user) => user.notificationToken)
       .filter((token) => token);
@@ -39,13 +29,50 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
       topic: "users",
     };
     if (userRegistrationTokens.length > 0) {
-      sendMultipleNotification(userRegistrationTokens, message, "users", res);
+       await sendMultipleNotification(userRegistrationTokens, message, "users", res);
     }
 
     res.status(200).json({
       status: "success",
       createdElement,
     });
+}
+
+//@desc Add quick order and notify all delivery boys
+//@route POST /api/v1/quickOrders/
+//access PUBLIC
+//NOTE we pass here the user who made the quick order in the body of the req.
+exports.addQuickOrder = catchAsync(async (req, res, next) => {
+  // let quickOrder = await QuickOrder.create(req.body);
+  // handleStoringImageAndCreatingElement("quickOrders", req, res);
+
+  if (!req.file) {
+    let createdElement = await QuickOrder.create(req.body);
+
+    handleSendNotificationAndCreateElement(createdElement)
+    // handleSendingQuickOrderNotifications(req, res);
+    
+    // const users = await User.find({ userType: "delivery" });
+    // const userRegistrationTokens = users
+    //   .map((user) => user.notificationToken)
+    //   .filter((token) => token);
+    // // Will be sent to all the delivery in the system
+    // const message = {
+    //   data: {
+    //     userType: req.query.userType,
+    //     type: "quickOrder",
+    //   },
+    //   topic: "users",
+    // };
+    // if (userRegistrationTokens.length > 0) {
+    //   sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    // }
+    // next()
+
+    // res.status(200).json({
+    //   status: "success",
+    //   createdElement,
+    // });
   } else {
     const blob = bucket.file(`${schemaType}/${req.file.originalname}`);
     const blobStream = blob.createWriteStream();
@@ -59,26 +86,26 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     let wholeBody = { ...req.body, photo: photoUrl };
     let createdElement = await QuickOrder.create(wholeBody);
 
-    const users = await User.find({ userType: "delivery" });
-    const userRegistrationTokens = users
-      .map((user) => user.notificationToken)
-      .filter((token) => token);
-    // Will be sent to all the delivery in the system
-    const message = {
-      data: {
-        userType: req.query.userType,
-        type: "quickOrder",
-      },
-      topic: "users",
-    };
-    if (userRegistrationTokens.length > 0) {
-      sendMultipleNotification(userRegistrationTokens, message, "users", res);
-    }
-
-    res.status(200).json({
-      status: "success",
-      createdElement,
-    });
+    // const users = await User.find({ userType: "delivery" });
+    // const userRegistrationTokens = users
+    //   .map((user) => user.notificationToken)
+    //   .filter((token) => token);
+    // // Will be sent to all the delivery in the system
+    // const message = {
+    //   data: {
+    //     userType: req.query.userType,
+    //     type: "quickOrder",
+    //   },
+    //   topic: "users",
+    // };
+    // if (userRegistrationTokens.length > 0) {
+    //   sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    // }
+    handleSendNotificationAndCreateElement(createdElement)
+    // res.status(200).json({
+    //   status: "success",
+    //   createdElement,
+    // });
     blobStream.end(req.file.buffer);
   }
 });
