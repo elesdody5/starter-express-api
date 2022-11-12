@@ -5,9 +5,9 @@ const Review = require("./../models/reviewModel");
 const { format } = require("util");
 const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
-var FCM = require("fcm-node");
-let serverKey = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
-var fcm = new FCM(serverKey);
+// var FCM = require("fcm-node");
+// let serverKey = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
+// var fcm = new FCM(serverKey);
 
 const {
   handleStoringImageAndCreatingElement,
@@ -333,41 +333,41 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   let notificationToken = user.notificationToken;
 
-  // const payload = {
-  //   data: {
-  //     msg: String(req.body.msg) || "",
-  //     title: String(req.body.title) || "",
-  //     metadata: String(req.body.metadata) || "",
-  //     type: String(req.body.type) || "",
-  //   },
-  // };
-  // if (notificationToken) {
-  //   await sendNotification(String(notificationToken), payload);
-  //   res.status(200).json({
-  //     status: "success",
-  //   });
-  // }
-
-  var message = {
-    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-    to: notificationToken,
-
-    notification: {
+  const payload = {
+    data: {
       msg: String(req.body.msg) || "",
       title: String(req.body.title) || "",
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
   };
-  fcm.send(message, function (err, response) {
-    console.log("inside");
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response);
-    }
-  });
-  res.status(200).json({
-    status: "success",
-  });
+  if (notificationToken) {
+    await sendNotification(String(notificationToken), payload);
+    res.status(200).json({
+      status: "success",
+    });
+  }
+
+  // var message = {
+  //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+  //   to: notificationToken,
+
+  //   notification: {
+  //     msg: String(req.body.msg) || "",
+  //     title: String(req.body.title) || "",
+  //     metadata: String(req.body.metadata) || "",
+  //     type: String(req.body.type) || "",
+  //   },
+  // };
+  // fcm.send(message, function (err, response) {
+  //   console.log("inside");
+  //   if (err) {
+  //     console.log("Something has gone wrong!", err);
+  //   } else {
+  //     console.log("Successfully sent with response: ", response);
+  //   }
+  // });
+  // res.status(200).json({
+  //   status: "success",
+  // });
 });

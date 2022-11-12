@@ -20,11 +20,7 @@ exports.sendNotification = async (notificationToken, payload) => {
 
   await admin
     .messaging()
-    .sendToDevice(
-      [String(notificationToken.replace("%", ":"))],
-      payload,
-      options
-    )
+    .sendAll([String(notificationToken.replace("%", ":"))], payload, options)
     .then((response1) => {
       console.log("Message sent successfully", response1);
     })
