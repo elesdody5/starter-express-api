@@ -8,7 +8,10 @@ const Product = require("../models/productModel");
 const User = require("../models/userModel");
 const QuickOrder = require("../models/quickOrderModel");
 // const { bucket } = require('./firebaseConfiguration');
-const { sendMultipleNotification } = require("./sendNotification");
+const {
+  sendMultipleNotification,
+  sendNotification,
+} = require("./sendNotification");
 const { bucket, storage } = require("../utils/test");
 // const { Storage } = require("@google-cloud/storage");
 
@@ -49,17 +52,84 @@ exports.handleStoringImageAndCreatingElement = catchAsync(
       case "products":
         Model = Product;
         break;
+      // case "quickOrders":
+      //   Model = QuickOrder;
+      //   break;
       case "shops":
         Model = Shop;
         break;
       case "services":
         Model = Service;
         break;
-      // case "quickOrders":
-      //   Model = QuickOrder;
-      //   break;
     }
+    // if (schemaType === "quickOrders") {
+    //   if (!req.file) {
+    //     const users = await User.find({ userType: "delivery" });
+    //     const userRegistrationTokens = users
+    //       .map((user) => user.notificationToken)
+    //       .filter((token) => token);
+    //     // Will be sent to all the delivery in the system
+    //     const message = {
+    //       data: {
+    //         userType: String(req.query.userType),
+    //         type: "quickOrder",
+    //       },
+    //     };
+    //     if (userRegistrationTokens.length > 0) {
+    //       for (let i = 0; i < userRegistrationTokens.length; i++) {
+    //         await sendNotification(userRegistrationTokens[i], message);
+    //       }
+    //       sendMultipleNotification(
+    //         userRegistrationTokens,
+    //         message,
+    //         "users",
+    //         res
+    //       );
+    //     }
 
+    //     res.status(200).json({
+    //       status: "success",
+    //       createdElement,
+    //     });
+    //   } else {
+    //     const blob = bucket.file(`${schemaType}/${req.file.originalname}`);
+    //     const blobStream = blob.createWriteStream();
+    //     blobStream.on("finish", async () => {
+    //       // The public URL can be used to directly access the file via HTTP.
+    //       publicUrl = format(
+    //         `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+    //       );
+    //     });
+    //     let photoUrl = `https://storage.googleapis.com/${bucket.name}/${schemaType}/${req.file.originalname}`;
+    //     let wholeBody = { ...req.body, photo: photoUrl };
+    //     let createdElement = await QuickOrder.create(wholeBody);
+
+    //     const users = await User.find({ userType: "delivery" });
+    //     const userRegistrationTokens = users
+    //       .map((user) => user.notificationToken)
+    //       .filter((token) => token);
+    //     // Will be sent to all the delivery in the system
+    //     const message = {
+    //       data: {
+    //         userType: String(req.query.userType) || "",
+    //         type: "quickOrder",
+    //       },
+    //       // topic: "users",
+    //     };
+    //     if (userRegistrationTokens.length > 0) {
+    //       for (let i = 0; i < userRegistrationTokens.length; i++) {
+    //         await sendNotification(userRegistrationTokens[i], message);
+    //       }
+    //       // sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    //     }
+
+    //     res.status(200).json({
+    //       status: "success",
+    //       createdElement,
+    //     });
+    //     blobStream.end(req.file.buffer);
+    //   }
+    // }
     if (!req.file) {
       let createdElement = await Model.create(req.body);
       // if (Model === QuickOrder) {
@@ -174,4 +244,3 @@ exports.handleUpdatingAndStoringElement = catchAsync(
     }
   }
 );
-module.exports = { storage, bucket };
