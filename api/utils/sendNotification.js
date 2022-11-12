@@ -16,7 +16,8 @@ exports.sendNotification = async (notificationToken, payload) => {
   //   ...payload,
   //   token: String(notificationToken.split(":")[1]),
   // };
-  // console.log(messageClone);
+  console.log(notificationToken, payload);
+
   await admin
     .messaging()
     .sendToDevice(notificationToken.split(":")[1], payload, options)
