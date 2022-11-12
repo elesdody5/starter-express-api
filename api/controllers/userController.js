@@ -5,6 +5,10 @@ const Review = require("./../models/reviewModel");
 const { format } = require("util");
 const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
+var FCM = require("fcm-node");
+var fcm = new FCM(
+  "AAAA8B5gdGE:APA91bGGSOFJxTWZhXtgRc8zoCxo34kArYmXSGdyhUiNNetPfxawbcPNlr8cL_-Mo4D2eE5RI2gLdCgEdPB8aEZtne-pXKyJDkOsvZ7_f169sg6NrA62dUaTjLolXcl9ny-LDK_M4lTY"
+);
 
 const {
   handleStoringImageAndCreatingElement,
@@ -331,18 +335,40 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   let notificationToken = user.notificationToken;
   console.log("FoundUser>>", user);
 
-  const payload = {
-    data: {
+  // const payload = {
+  //   data: {
+  //     msg: String(req.body.msg) || "",
+  //     title: String(req.body.title) || "",
+  //     metadata: String(req.body.metadata) || "",
+  //     type: String(req.body.type) || "",
+  //   },
+  // };
+  // if (notificationToken) {
+  //   await sendNotification(String(notificationToken), payload);
+  //   res.status(200).json({
+  //     status: "success",
+  //   });
+  // }
+
+  var message = {
+    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+    to: notificationToken,
+
+    notification: {
       msg: String(req.body.msg) || "",
       title: String(req.body.title) || "",
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
   };
-  if (notificationToken) {
-    await sendNotification(String(notificationToken), payload);
-    res.status(200).json({
-      status: "success",
-    });
-  }
+  fcm.send(message, function (err, response) {
+    if (err) {
+      console.log("Something has gone wrong!");
+    } else {
+      console.log("Successfully sent with response: ", response);
+    }
+  });
+  res.status(200).json({
+    status: "success",
+  });
 });
