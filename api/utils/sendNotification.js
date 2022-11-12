@@ -8,14 +8,18 @@ admin.initializeApp({
 
 //This function takes notification token and payload and it sends notification to a proper device
 exports.sendNotification = async (notificationToken, payload) => {
-  var options = {
-    priority: "high",
-    timeToLive: 60 * 60 * 24,
+  // var options = {
+  //   priority: "high",
+  //   timeToLive: 60 * 60 * 24,
+  // };
+  let messageClone = {
+    ...payload,
+    tokens: notificationToken,
   };
 
   await admin
     .messaging()
-    .send(notificationToken, payload, options)
+    .send(messageClone)
     .then((response1) => {
       console.log("Message sent successfully", response1);
     })
