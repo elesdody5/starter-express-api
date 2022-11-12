@@ -15,7 +15,7 @@ exports.sendNotification = async (notificationToken, payload) => {
 
   await admin
     .messaging()
-    .sendToDevice(notificationToken, payload, options)
+    .send(notificationToken, payload, options)
     .then((response1) => {
       console.log("Message sent successfully", response1);
     })
