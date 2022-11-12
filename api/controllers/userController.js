@@ -333,7 +333,6 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
 
   let notificationToken = user.notificationToken;
-  console.log("data", user, notificationToken);
 
   // const payload = {
   //   data: {
@@ -362,6 +361,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
     },
   };
   fcm.send(message, function (err, response) {
+    console.log("inside");
     if (err) {
       console.log("Something has gone wrong!", err);
     } else {
