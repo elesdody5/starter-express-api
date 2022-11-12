@@ -6,9 +6,8 @@ const { format } = require("util");
 const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 var FCM = require("fcm-node");
-var fcm = new FCM(
-  "AAAA8B5gdGE:APA91bGGSOFJxTWZhXtgRc8zoCxo34kArYmXSGdyhUiNNetPfxawbcPNlr8cL_-Mo4D2eE5RI2gLdCgEdPB8aEZtne-pXKyJDkOsvZ7_f169sg6NrA62dUaTjLolXcl9ny-LDK_M4lTY"
-);
+let serverKey = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
+var fcm = new FCM(serverKey);
 
 const {
   handleStoringImageAndCreatingElement,
