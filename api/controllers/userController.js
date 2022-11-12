@@ -308,18 +308,18 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
     // topic: "users",
   };
 
-  if (userRegistrationTokens.length > 0) {
-    // sendMultipleNotification(userRegistrationTokens, message, "users", res);
-    for (let i = 0; i < userRegistrationTokens.length; i++) {
-      await sendNotification(userRegistrationTokens[i], message);
-    }
-    await Notification.create(req.body);
-  }
-  console.log(userRegistrationTokens);
   // if (userRegistrationTokens.length > 0) {
-  //   await sendMultipleNotification(userRegistrationTokens, message, "sss", res);
+  //   // sendMultipleNotification(userRegistrationTokens, message, "users", res);
+  //   for (let i = 0; i < userRegistrationTokens.length; i++) {
+  //     await sendNotification(userRegistrationTokens[i], message);
+  //   }
+  //   await Notification.create(req.body);
   // }
-  // await Notification.create(req.body);
+  console.log(userRegistrationTokens);
+  if (userRegistrationTokens.length > 0) {
+    await sendMultipleNotification(userRegistrationTokens, message, "sss", res);
+  }
+  await Notification.create(req.body);
   res.status(200).json({
     status: "success",
   });
