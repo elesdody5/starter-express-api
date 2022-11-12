@@ -340,7 +340,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
     },
   };
   if (notificationToken) {
-    await sendNotification(notificationToken, payload);
+    await sendNotification(String(notificationToken), payload);
     res.status(200).json({
       status: "success",
     });
