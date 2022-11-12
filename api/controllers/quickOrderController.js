@@ -40,7 +40,7 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     const users = await User.find({ userType: "delivery" });
     let userRegistrationTokens = users
       .map((user) => user.notificationToken)
-      .filter((token) => token !== null);
+      .filter((token) => token);
 
     userRegistrationTokens = [...new Set(userRegistrationTokens)];
     // Will be sent to all the delivery in the system
