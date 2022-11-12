@@ -5,6 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("./../utils/ErrorMsgsConstants");
 const Record = require("../models/recordModel");
 const cloudinary = require("../utils/cloudinaryConfiguration");
+// const { bucket } = require("../utils/firebaseStorage");
 const {
   sendMultipleNotification,
   sendNotification,
@@ -15,24 +16,14 @@ const {
 } = require("../utils/firebaseStorage");
 const { arrayBuffer } = require("stream/consumers");
 const { join } = require("path");
+// const { bucket } = require("../utils/test");
+const { Storage } = require("@google-cloud/storage");
 
-// handleSend = () => {
-//   const users = await User.find({ userType: "delivery" });
-//     const userRegistrationTokens = users
-//       .map((user) => user.notificationToken)
-//       .filter((token) => token);
-//     // Will be sent to all the delivery in the system
-//     const message = {
-//       data: {
-//         userType: req.query.userType,
-//         type: "quickOrder",
-//       },
-//       topic: "users",
-//     };
-//     if (userRegistrationTokens.length > 0) {
-//       sendMultipleNotification(userRegistrationTokens, message, "users", res);
-//     }
-// }
+const storage = new Storage({
+  projectId: "delivery-app-5e621",
+  keyFilename: "delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json",
+});
+let bucket = storage.bucket("gs://delivery-app-5e621.appspot.com");
 
 //@desc Add quick order and notify all delivery boys
 //@route POST /api/v1/quickOrders/
@@ -43,10 +34,6 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
   // handleStoringImageAndCreatingElement("quickOrders", req, res);
 
   if (!req.file) {
-    let createdElement = await QuickOrder.create(req.body);
-
-    // handleSendingQuickOrderNotifications(req, res);
-
     const users = await User.find({ userType: "delivery" });
     const userRegistrationTokens = users
       .map((user) => user.notificationToken)
@@ -57,13 +44,12 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
         userType: String(req.query.userType),
         type: "quickOrder",
       },
-      // topic: "users",
     };
     if (userRegistrationTokens.length > 0) {
       for (let i = 0; i < userRegistrationTokens.length; i++) {
         await sendNotification(userRegistrationTokens[i], message);
       }
-      // sendMultipleNotification(userRegistrationTokens, message, "users", res);
+      sendMultipleNotification(userRegistrationTokens, message, "users", res);
     }
 
     res.status(200).json({
@@ -71,7 +57,7 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
       createdElement,
     });
   } else {
-    const blob = bucket.file(`${schemaType}/${req.file.originalname}`);
+    const blob = bucket.file(`quickOrders/${req.file.originalname}`);
     const blobStream = blob.createWriteStream();
     blobStream.on("finish", async () => {
       // The public URL can be used to directly access the file via HTTP.
@@ -79,7 +65,7 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
         `https://storage.googleapis.com/${bucket.name}/${blob.name}`
       );
     });
-    let photoUrl = `https://storage.googleapis.com/${bucket.name}/${schemaType}/${req.file.originalname}`;
+    let photoUrl = `https://storage.googleapis.com/${bucket.name}/quickOrders/${req.file.originalname}`;
     let wholeBody = { ...req.body, photo: photoUrl };
     let createdElement = await QuickOrder.create(wholeBody);
 
@@ -265,10 +251,22 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
           }
         });
       });
+      const uniqueElements = [];
+      let filteredData = data.filter((element) => {
+        const isDuplicate = uniqueElements.includes(element._id);
+
+        if (!isDuplicate) {
+          uniqueElements.push(element._id);
+
+          return true;
+        }
+
+        return false;
+      });
 
       res.status(200).json({
         status: "success",
-        data,
+        data: filteredData,
       });
     }
   }

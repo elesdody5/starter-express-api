@@ -9,13 +9,14 @@ const User = require("../models/userModel");
 const QuickOrder = require("../models/quickOrderModel");
 // const { bucket } = require('./firebaseConfiguration');
 const { sendMultipleNotification } = require("./sendNotification");
-const { Storage } = require("@google-cloud/storage");
+const { bucket, storage } = require("../utils/test");
+// const { Storage } = require("@google-cloud/storage");
 
-const storage = new Storage({
-  projectId: "delivery-app-5e621",
-  keyFilename: "delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json",
-});
-let bucket = storage.bucket("gs://delivery-app-5e621.appspot.com");
+// const storage = new Storage({
+//   projectId: "delivery-app-5e621",
+//   keyFilename: "delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json",
+// });
+// let bucket = storage.bucket("gs://delivery-app-5e621.appspot.com");
 
 const handleSendingQuickOrderNotifications = async (req, res) => {
   const users = await User.find({ userType: "delivery" });
@@ -173,3 +174,4 @@ exports.handleUpdatingAndStoringElement = catchAsync(
     }
   }
 );
+module.exports = { storage, bucket };
