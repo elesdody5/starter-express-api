@@ -317,7 +317,7 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
   // }
   console.log(userRegistrationTokens);
   if (userRegistrationTokens.length > 0) {
-    sendMultipleNotification(userRegistrationTokens, message, "sss", res);
+    await sendMultipleNotification(userRegistrationTokens, message, "sss", res);
   }
   res.status(200).json({
     status: "success",
