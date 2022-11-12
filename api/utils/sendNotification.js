@@ -27,25 +27,32 @@ exports.sendMultipleNotification = async (
   topic,
   res
 ) => {
-  await admin
-    .messaging()
-    .subscribeToTopic(registrationTokens, topic)
-    .then((response) => {
-      // See the MessagingTopicManagementResponse reference documentation
-      // for the contents of response.
-      console.log("Successfully subscribed to topic:", response);
-    })
-    .catch((error) => {
-      console.log("Error subscribing to topic:", error);
-    });
+  // await admin
+  //   .messaging()
+  //   .subscribeToTopic(registrationTokens, topic)
+  //   .then((response) => {
+  //     console.log("subbed");
+  //     // See the MessagingTopicManagementResponse reference documentation
+  //     // for the contents of response.
+  //     console.log("Successfully subscribed to topic:", response);
+  //   })
+  //   .catch((error) => {
+  //     console.log("Error subscribing to topic:", error);
+  //   });
 
   // Send a message to devices subscribed to the provided topic.
+  let messageClone = {
+    ...message,
+    tokens: registrationTokens,
+  };
 
+  console.log("YAHOOOOOO");
   await admin
     .messaging()
-    .send(message)
+    .sendMulticast(messageClone)
     .then((response) => {
       // Response is a message ID string.
+
       console.log("Successfully sent message:", response);
     })
     .catch((error) => {
