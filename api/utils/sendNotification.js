@@ -14,9 +14,9 @@ exports.sendNotification = async (notificationToken, payload) => {
   // };
   let messageClone = {
     ...payload,
-    token: String(notificationToken),
+    token: String(notificationToken.split(":")[1]),
   };
-  console.log(messageClone);
+
   await admin
     .messaging()
     .send(messageClone)
