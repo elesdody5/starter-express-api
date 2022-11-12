@@ -43,7 +43,7 @@ router.get(
 router.get("/verifyPhoneNumber", verifyPhoneNumber);
 
 // Endpoint for updating the token
-router.patch("/notificationToken", protect, updateNotificationToken);
+router.patch("/notificationToken", updateNotificationToken);
 
 router.route("/").get(getAllUsers);
 router
