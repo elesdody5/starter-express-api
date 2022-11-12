@@ -12,15 +12,17 @@ exports.sendNotification = async (notificationToken, payload) => {
     priority: "high",
     timeToLive: 60 * 60 * 24,
   };
-  // let messageClone = {
-  //   ...payload,
-  //   token: String(notificationToken.split(":")[1]),
-  // };
+  let messageClone = [
+    {
+      ...payload,
+      token: String(notificationToken),
+    },
+  ];
   console.log(notificationToken, payload);
 
   await admin
     .messaging()
-    .sendAll([String(notificationToken.replace("%", ":"))], payload, options)
+    .sendAll(messageClone, true)
     .then((response1) => {
       console.log("Message sent successfully", response1);
     })
