@@ -47,7 +47,7 @@ exports.sendMultipleNotification = async (
   };
 
   console.log("YAHOOOOOO");
-  await admin
+  admin
     .messaging()
     .sendMulticast(messageClone)
     .then((response) => {
