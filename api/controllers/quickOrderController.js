@@ -36,10 +36,11 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
   // handleStoringImageAndCreatingElement("quickOrders", req, res);
 
   if (!req.file) {
+    let createdElement = await QuickOrder.create(req.body);
     const users = await User.find({ userType: "delivery" });
     const userRegistrationTokens = users
       .map((user) => user.notificationToken)
-      .filter((token) => token);
+      .filter((token) => token !== null);
     // Will be sent to all the delivery in the system
     const message = {
       data: {
@@ -49,7 +50,9 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     };
     if (userRegistrationTokens.length > 0) {
       for (let i = 0; i < userRegistrationTokens.length; i++) {
-        await sendNotification(userRegistrationTokens[i], message);
+        if (userRegistrationTokens[i]) {
+          await sendNotification(userRegistrationTokens[i], message);
+        }
       }
       sendMultipleNotification(userRegistrationTokens, message, "users", res);
     }
