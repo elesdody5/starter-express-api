@@ -217,9 +217,22 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
           }
         });
       });
+      const uniqueElements = [];
+      let filteredData = data.filter((element) => {
+        const isDuplicate = uniqueElements.includes(element._id);
+
+        if (!isDuplicate) {
+          uniqueElements.push(element._id);
+
+          return true;
+        }
+
+        return false;
+      });
+
       res.status(200).json({
         status: "success",
-        data,
+        data: filteredData,
       });
     }
   } else {
