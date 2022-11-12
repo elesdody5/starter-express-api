@@ -330,18 +330,16 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   let notificationToken = user.notificationToken;
 
-  const message = {
+  const payload = {
     data: {
       msg: String(req.body.msg) || "",
       title: String(req.body.title) || "",
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
-    token: notificationToken,
   };
   if (notificationToken) {
-    // await sendNotification(notificationToken, payload);
-    await sendNotification(message);
+    await sendNotification(notificationToken, payload);
     res.status(200).json({
       status: "success",
     });
