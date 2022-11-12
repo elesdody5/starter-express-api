@@ -329,6 +329,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
 
   let notificationToken = user.notificationToken;
+  console.log("FoundUser>>", user);
 
   const payload = {
     data: {
