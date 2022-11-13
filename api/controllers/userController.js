@@ -368,7 +368,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
-    to: notificationToken.split(":")[1],
+    to: notificationToken,
   };
   fcm.send(message, function (err, response) {
     console.log("inside");
