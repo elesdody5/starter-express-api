@@ -344,12 +344,11 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       type: String(req.body.type) || "",
     },
   };
-  if (notificationToken) {
-    await sendNotification(notificationToken, payload);
-    res.status(200).json({
-      status: "success",
-    });
-  }
+
+  sendNotification(notificationToken, payload);
+  res.status(200).json({
+    status: "success",
+  });
 
   // var message = {
   //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
