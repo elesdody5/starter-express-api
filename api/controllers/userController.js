@@ -7,11 +7,10 @@ const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 const admin = require("firebase-admin");
 
-// var FCM = require("fcm-node");
-// var fcm = require("fcm-notification");
-// let serviceAcc = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
-// const certPath = admin.credential.cert(serviceAcc);
-// var FCM = new fcm(certPath);
+var FCM = require("fcm-node");
+let serviceAcc = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
+const certPath = admin.credential.cert(serviceAcc);
+var fcm = new FCM(certPath);
 
 const {
   handleStoringImageAndCreatingElement,
@@ -331,52 +330,47 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
     status: "success",
   });
 });
-// exports.notifySingleUser = catchAsync(async (req, res, next) => {
-//   let userId = req.query.userId;
-//   const user = await User.findOne({ _id: userId });
+exports.notifySingleUser = catchAsync(async (req, res, next) => {
+  let userId = req.query.userId;
+  const user = await User.findOne({ _id: userId });
 
-//   let notificationToken = user.notificationToken;
+  let notificationToken = user.notificationToken;
 
-//   const payload = {
-//     data: {
-//       msg: String(req.body.msg) || "",
-//       title: String(req.body.title) || "",
-//       metadata: String(req.body.metadata) || "",
-//       type: String(req.body.type) || "",
-//     },
-//   };
-//   // if (notificationToken) {
-//   //   await sendNotification(String(notificationToken), payload);
-//   //   res.status(200).json({
-//   //     status: "success",
-//   //   });
-//   // }
+  const payload = {
+    data: {
+      msg: String(req.body.msg) || "",
+      title: String(req.body.title) || "",
+      metadata: String(req.body.metadata) || "",
+      type: String(req.body.type) || "",
+    },
+  };
+  // if (notificationToken) {
+  //   await sendNotification(String(notificationToken), payload);
+  //   res.status(200).json({
+  //     status: "success",
+  //   });
+  // }
 
-//   console.log("HIIIIs");
-//   var message = {
-//     //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+  var message = {
+    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
 
-//     notification: {
-//       title: "wewe",
-//       body: "wwwww",
-//     },
-//     data: {
-//       msg: String(req.body.msg) || "",
-//       title: String(req.body.title) || "",
-//       metadata: String(req.body.metadata) || "",
-//       type: String(req.body.type) || "",
-//     },
-//     token: notificationToken,
-//   };
-//   FCM.send(message, function (err, response) {
-//     console.log("inside");
-//     if (err) {
-//       console.log("Something has gone wrong!", err);
-//     } else {
-//       console.log("Successfully sent with response: ", response);
-//     }
-//   });
-//   res.status(200).json({
-//     status: "success",
-//   });
-// });
+    notification: {
+      msg: String(req.body.msg) || "",
+      title: String(req.body.title) || "",
+      metadata: String(req.body.metadata) || "",
+      type: String(req.body.type) || "",
+    },
+    to: notificationToken,
+  };
+  fcm.send(message, function (err, response) {
+    console.log("inside");
+    if (err) {
+      console.log("Something has gone wrong!", err);
+    } else {
+      console.log("Successfully sent with response: ", response);
+    }
+  });
+  res.status(200).json({
+    status: "success",
+  });
+});
