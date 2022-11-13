@@ -335,7 +335,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
 
   let notificationToken = user.notificationToken;
-
+  console.log(notificationToken);
   const message = {
     data: {
       msg: String(req.body.msg) || "",
@@ -343,7 +343,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
-    token: notificationToken,
+    token: notificationToken.split(":")[1],
   };
 
   admin
