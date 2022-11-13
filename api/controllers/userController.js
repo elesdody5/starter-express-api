@@ -336,16 +336,24 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   let notificationToken = user.notificationToken;
 
-  const payload = {
+  const message = {
     data: {
       msg: String(req.body.msg) || "",
       title: String(req.body.title) || "",
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
+    token: notificationToken,
   };
 
-  sendNotification(notificationToken, payload);
+  admin
+    .messaging()
+    .send(message)
+    .then((response1) => {
+      console.log(response1);
+    })
+    .catch((err) => console.log("Error in sending message", err));
+  // sendNotification(notificationToken, payload);
   res.status(200).json({
     status: "success",
   });

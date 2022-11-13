@@ -16,6 +16,7 @@ exports.sendNotification = async (registrationToken, payload) => {
   //   ...payload,
   //   token: registrationToken,
   // };
+
   console.log("before notification");
 
   admin
