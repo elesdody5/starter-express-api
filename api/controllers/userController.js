@@ -344,33 +344,33 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       type: String(req.body.type) || "",
     },
   };
-  // if (notificationToken) {
-  //   await sendNotification(String(notificationToken), payload);
-  //   res.status(200).json({
-  //     status: "success",
-  //   });
-  // }
+  if (notificationToken) {
+    sendNotification(String(notificationToken), payload);
+    res.status(200).json({
+      status: "success",
+    });
+  }
 
-  var message = {
-    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+  // var message = {
+  //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
 
-    notification: {
-      msg: String(req.body.msg) || "",
-      title: String(req.body.title) || "",
-      metadata: String(req.body.metadata) || "",
-      type: String(req.body.type) || "",
-    },
-    to: notificationToken,
-  };
-  fcm.send(message, function (err, response) {
-    console.log("inside");
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response);
-    }
-  });
-  res.status(200).json({
-    status: "success",
-  });
+  //   notification: {
+  //     msg: String(req.body.msg) || "",
+  //     title: String(req.body.title) || "",
+  //     metadata: String(req.body.metadata) || "",
+  //     type: String(req.body.type) || "",
+  //   },
+  //   to: notificationToken,
+  // };
+  // fcm.send(message, function (err, response) {
+  //   console.log("inside");
+  //   if (err) {
+  //     console.log("Something has gone wrong!", err);
+  //   } else {
+  //     console.log("Successfully sent with response: ", response);
+  //   }
+  // });
+  // res.status(200).json({
+  //   status: "success",
+  // });
 });
