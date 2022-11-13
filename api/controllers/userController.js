@@ -335,50 +335,48 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
 
   let notificationToken = user.notificationToken;
-  console.log(String(notificationToken.split(":")[1]));
-  // const message = {
-  //   data: {
-  //     msg: String(req.body.msg) || "",
-  //     title: String(req.body.title) || "",
-  //     metadata: String(req.body.metadata) || "",
-  //     type: String(req.body.type) || "",
-  //   },
-  //   token:
-  //     "3AAPA91bGbpAy6fGIH_1lbN-9c2MWBNx9FCZLjEHYhvd1TQG63qdZJKZjOoJGwvoqaICkklgTapPdwY5lpySKl_7raGL1C36N82DRZ8yo9i3f0itWPB-BZx9kfJJn23CH9iwtCtBURoVlk",
-  // };
 
-  // admin
-  //   .messaging()
-  //   .send(message)
-  //   .then((response1) => {
-  //     console.log(response1);
-  //   })
-  //   .catch((err) => console.log("Error in sending message", err));
-  // // sendNotification(notificationToken, payload);
-  // res.status(200).json({
-  //   status: "success",
-  // });
-
-  var message = {
-    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-
-    notification: {
+  const message = {
+    data: {
       msg: String(req.body.msg) || "",
       title: String(req.body.title) || "",
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
-    to: notificationToken,
+    tokens: [notificationToken],
   };
-  fcm.send(message, function (err, response) {
-    console.log("inside");
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response);
-    }
-  });
+
+  admin
+    .messaging()
+    .sendMulticast(message)
+    .then((response1) => {
+      console.log(response1);
+    })
+    .catch((err) => console.log("Error in sending message", err));
+  // sendNotification(notificationToken, payload);
   res.status(200).json({
     status: "success",
   });
+
+  // var message = {
+  //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+  //   to: notificationToken,
+  //   notification: {
+  //     msg: String(req.body.msg) || "",
+  //     title: String(req.body.title) || "",
+  //     metadata: String(req.body.metadata) || "",
+  //     type: String(req.body.type) || "",
+  //   },
+  // };
+  // fcm.send(message, function (err, response) {
+  //   console.log("inside");
+  //   if (err) {
+  //     console.log("Something has gone wrong!", err);
+  //   } else {
+  //     console.log("Successfully sent with response: ", response);
+  //   }
+  // });
+  // res.status(200).json({
+  //   status: "success",
+  // });
 });
