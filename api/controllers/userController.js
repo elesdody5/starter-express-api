@@ -8,7 +8,7 @@ const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 const admin = require("firebase-admin");
 
 var FCM = require("fcm-node");
-let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
+let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
 const certPath = admin.credential.cert(serviceAcc);
 var fcm = new FCM(certPath);
 
