@@ -5,9 +5,13 @@ const Review = require("./../models/reviewModel");
 const { format } = require("util");
 const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
+const admin = require("firebase-admin");
+
 // var FCM = require("fcm-node");
-// let serverKey = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
-// var fcm = new FCM(serverKey);
+var fcm = require("fcm-notification");
+let serviceAcc = require("../delivery-app-5e621-firebase-adminsdk-kjin7-465d741a9b.json");
+const certPath = admin.credential.cert(serviceAcc);
+var FCM = new fcm(certPath);
 
 const {
   handleStoringImageAndCreatingElement,
@@ -341,33 +345,37 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       type: String(req.body.type) || "",
     },
   };
-  if (notificationToken) {
-    await sendNotification(String(notificationToken), payload);
-    res.status(200).json({
-      status: "success",
-    });
-  }
+  // if (notificationToken) {
+  //   await sendNotification(String(notificationToken), payload);
+  //   res.status(200).json({
+  //     status: "success",
+  //   });
+  // }
 
-  // var message = {
-  //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-  //   to: notificationToken,
+  var message = {
+    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
 
-  //   notification: {
-  //     msg: String(req.body.msg) || "",
-  //     title: String(req.body.title) || "",
-  //     metadata: String(req.body.metadata) || "",
-  //     type: String(req.body.type) || "",
-  //   },
-  // };
-  // fcm.send(message, function (err, response) {
-  //   console.log("inside");
-  //   if (err) {
-  //     console.log("Something has gone wrong!", err);
-  //   } else {
-  //     console.log("Successfully sent with response: ", response);
-  //   }
-  // });
-  // res.status(200).json({
-  //   status: "success",
-  // });
+    notification: {
+      title: "wewe",
+      body: "wwwww",
+    },
+    data: {
+      msg: String(req.body.msg) || "",
+      title: String(req.body.title) || "",
+      metadata: String(req.body.metadata) || "",
+      type: String(req.body.type) || "",
+    },
+    token: notificationToken,
+  };
+  FCM.send(message, function (err, response) {
+    console.log("inside");
+    if (err) {
+      console.log("Something has gone wrong!", err);
+    } else {
+      console.log("Successfully sent with response: ", response);
+    }
+  });
+  res.status(200).json({
+    status: "success",
+  });
 });
