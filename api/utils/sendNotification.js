@@ -8,20 +8,23 @@ admin.initializeApp({
 
 //This function takes notification token and payload and it sends notification to a proper device
 exports.sendNotification = async (notificationToken, payload) => {
-  // var options = {
-  //   priority: "high",
-  //   timeToLive: 60 * 60 * 24,
-  // };
-  let messageClone = {
-    ...payload,
-    token:
-      "eKO4Dl9fSUeaTOokOwfWXs%3AAPA91bGbpAy6fGIH_1lbN-9c2MWBNx9FCZLjEHYhvd1TQG63qdZJKZjOoJGwvoqaICkklgTapPdwY5lpySKl_7raGL1C36N82DRZ8yo9i3f0itWPB-BZx9kfJJn23CH9iwtCtBURoVlk",
+  var options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24,
   };
+  // let messageClone = {
+  //   ...payload,
+  //   token: "",
+  // };
   console.log("before notification");
 
   await admin
     .messaging()
-    .sendAll([messageClone])
+    .sendToDevice(
+      "eKO4Dl9fSUeaTOokOwfWXs%3AAPA91bGbpAy6fGIH_1lbN-9c2MWBNx9FCZLjEHYhvd1TQG63qdZJKZjOoJGwvoqaICkklgTapPdwY5lpySKl_7raGL1C36N82DRZ8yo9i3f0itWPB-BZx9kfJJn23CH9iwtCtBURoVlk",
+      payload,
+      options
+    )
     .then((response1) => {
       console.log("Message sent successfully", response1);
     })
