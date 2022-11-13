@@ -336,47 +336,40 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   let notificationToken = user.notificationToken;
 
-  // const message = {
-  //   data: {
-  //     msg: String(req.body.msg) || "",
-  //     title: String(req.body.title) || "",
-  //     metadata: String(req.body.metadata) || "",
-  //     type: String(req.body.type) || "",
-  //   },
-  //   tokens: [notificationToken],
-  // };
-
-  // admin
-  //   .messaging()
-  //   .sendMulticast(message)
-  //   .then((response1) => {
-  //     console.log(response1);
-  //   })
-  //   .catch((err) => console.log("Error in sending message", err));
-  // // sendNotification(notificationToken, payload);
-  // res.status(200).json({
-  //   status: "success",
-  // });
-
-  var message = {
-    //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-    to: notificationToken,
-    notification: {
+  const message = {
+    data: {
       msg: String(req.body.msg) || "",
       title: String(req.body.title) || "",
       metadata: String(req.body.metadata) || "",
       type: String(req.body.type) || "",
     },
+    // tokens: [notificationToken],
   };
-  fcm.send(message, function (err, response) {
-    console.log("inside");
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response);
-    }
-  });
+
+  sendNotification(notificationToken, message);
   res.status(200).json({
     status: "success",
   });
+
+  // var message = {
+  //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+  //   to: notificationToken,
+  //   notification: {
+  //     msg: String(req.body.msg) || "",
+  //     title: String(req.body.title) || "",
+  //     metadata: String(req.body.metadata) || "",
+  //     type: String(req.body.type) || "",
+  //   },
+  // };
+  // fcm.send(message, function (err, response) {
+  //   console.log("inside");
+  //   if (err) {
+  //     console.log("Something has gone wrong!", err);
+  //   } else {
+  //     console.log("Successfully sent with response: ", response);
+  //   }
+  // });
+  // res.status(200).json({
+  //   status: "success",
+  // });
 });
