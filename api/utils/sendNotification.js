@@ -7,14 +7,14 @@ admin.initializeApp({
 });
 
 //This function takes notification token and payload and it sends notification to a proper device
-exports.sendNotification = async (notificationToken, payload) => {
+exports.sendNotification = async (registrationToken, payload) => {
   // var options = {
   //   priority: "high",
   //   timeToLive: 60 * 60 * 24,
   // };
   let messageClone = {
     ...payload,
-    token: String(notificationToken),
+    token: registrationToken,
   };
   console.log("before notification");
 
@@ -22,7 +22,7 @@ exports.sendNotification = async (notificationToken, payload) => {
     .messaging()
     .sendAll([messageClone])
     .then((response1) => {
-      console.log("Message sent successfully", response1);
+      console.log(response1);
     })
     .catch((err) => console.log("Error in sending message", err));
 };
