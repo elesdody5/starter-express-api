@@ -14,7 +14,8 @@ exports.sendNotification = async (notificationToken, payload) => {
   // };
   let messageClone = {
     ...payload,
-    token: notificationToken,
+    token:
+      "eKO4Dl9fSUeaTOokOwfWXs%3AAPA91bGbpAy6fGIH_1lbN-9c2MWBNx9FCZLjEHYhvd1TQG63qdZJKZjOoJGwvoqaICkklgTapPdwY5lpySKl_7raGL1C36N82DRZ8yo9i3f0itWPB-BZx9kfJJn23CH9iwtCtBURoVlk",
   };
   console.log("before notification");
 
