@@ -17,9 +17,10 @@ exports.sendNotification = async (notificationToken, payload) => {
     token: String(notificationToken),
   };
   console.log("before notification");
-  admin
+
+  await admin
     .messaging()
-    .send(messageClone)
+    .sendAll([messageClone])
     .then((response1) => {
       console.log("Message sent successfully", response1);
     })
