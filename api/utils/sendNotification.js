@@ -14,7 +14,7 @@ exports.sendNotification = async (notificationToken, payload) => {
   // };
   let messageClone = {
     ...payload,
-    token: String(notificationToken),
+    token: notificationToken,
   };
   console.log("before notification");
 
