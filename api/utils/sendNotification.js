@@ -7,7 +7,7 @@ admin.initializeApp({
 });
 
 //This function takes notification token and payload and it sends notification to a proper device
-exports.sendNotification = async (registrationToken, payload) => {
+exports.sendNotification = async (registrationToken, message) => {
   var options = {
     priority: "high",
     timeToLive: 60 * 60 * 24,
@@ -21,7 +21,7 @@ exports.sendNotification = async (registrationToken, payload) => {
 
   admin
     .messaging()
-    .sendMulticast(payload)
+    .sendToDevice(registrationToken, message, options)
     .then((response1) => {
       console.log(response1);
     })
