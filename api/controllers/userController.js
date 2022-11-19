@@ -335,7 +335,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   let notificationToken = user.notificationToken;
 
   let registrationTokens = [
-    String(notificationToken),
+    String(notificationToken + "Wewe"),
     String(notificationToken),
   ];
   const message = {

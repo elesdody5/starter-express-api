@@ -17,13 +17,13 @@ exports.sendNotification = async (registrationToken, message) => {
   //   token: registrationToken,
   // };
 
-  console.log("before notification");
+  console.log("before notification", message);
 
   admin
     .messaging()
     .sendMulticast(message)
     .then((response1) => {
-      console.log(response1);
+      console.log(response1.responses);
     })
     .catch((err) => console.log("Error in sending message", err));
 };
