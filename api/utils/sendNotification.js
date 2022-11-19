@@ -23,7 +23,7 @@ exports.sendNotification = async (registrationToken, message) => {
     .messaging()
     .sendToDevice(registrationToken, message, options)
     .then((response1) => {
-      console.log(response1);
+      console.log(response1.results);
     })
     .catch((err) => console.log("Error in sending message", err));
 };
