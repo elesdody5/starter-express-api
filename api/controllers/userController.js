@@ -334,6 +334,10 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   let notificationToken = user.notificationToken;
 
+  let registrationTokens = [
+    String(notificationToken),
+    String(notificationToken),
+  ];
   const message = {
     data: {
       msg: req.body.msg,
@@ -341,9 +345,10 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
       metadata: req.body.metadata,
       type: req.body.type,
     },
+    tokens: registrationTokens,
   };
 
-  sendNotification(notificationToken, message);
+  sendNotification(message);
   res.status(200).json({
     status: "success",
   });

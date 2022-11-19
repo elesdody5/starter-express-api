@@ -21,7 +21,7 @@ exports.sendNotification = async (registrationToken, message) => {
 
   admin
     .messaging()
-    .sendToDevice(registrationToken, message, options)
+    .sendMulticast(message)
     .then((response1) => {
       console.log(response1.results);
     })
