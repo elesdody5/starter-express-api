@@ -51,11 +51,11 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
       },
     };
 
-    if (userRegistrationTokens.length > 0) {
-      for (let i = 0; i < userRegistrationTokens.length; i++) {
-        await sendNotification(userRegistrationTokens[i], message);
-      }
-    }
+    // if (userRegistrationTokens.length > 0) {
+    //   for (let i = 0; i < userRegistrationTokens.length; i++) {
+    //     await sendNotification(userRegistrationTokens[i], message);
+    //   }
+    // }
 
     res.status(200).json({
       status: "success",
@@ -86,12 +86,12 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
       },
       // topic: "users",
     };
-    if (userRegistrationTokens.length > 0) {
-      for (let i = 0; i < userRegistrationTokens.length; i++) {
-        await sendNotification(userRegistrationTokens[i], message);
-      }
-      // sendMultipleNotification(userRegistrationTokens, message, "users", res);
-    }
+    // if (userRegistrationTokens.length > 0) {
+    //   for (let i = 0; i < userRegistrationTokens.length; i++) {
+    //     await sendNotification(userRegistrationTokens[i], message);
+    //   }
+    //   // sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    // }
 
     res.status(200).json({
       status: "success",
