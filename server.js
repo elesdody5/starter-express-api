@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === "development") {
       console.log("connected successfully with hosted DB");
     });
 }
-const port = process.env.PORT || 8070;
+const port = process.env.PORT || 8060;
 
 const server = app.listen(port, () => {
   console.log(`app running on port ${port}..`);

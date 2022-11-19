@@ -7,11 +7,19 @@ const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 const admin = require("firebase-admin");
 
-var FCM = require("fcm-node");
 let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
 const certPath = admin.credential.cert(serviceAcc);
-var fcm = new FCM(certPath);
 
+// const OneSignal = require("onesignal-node");
+
+// const client = new OneSignal.Client(
+//   "f1a0a83a-1511-4a45-820c-284c40001b39",
+//   "MDVmNzg3M2YtY2Y3Ny00MmY1LWFhOGEtYTU5NDJhNDc3Yjgy"
+// );
+
+// let expo = new Expo({
+//   accessToken: "PA1KYs9ywJ5_GBmoIAWfzl-bTEjzdQe8k5JKsC28",
+// });
 const {
   handleStoringImageAndCreatingElement,
   handleUpdatingAndStoringElement,
@@ -338,12 +346,12 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   const message = {
     data: {
-      msg: String(req.body.msg) || "",
-      title: String(req.body.title) || "",
-      metadata: String(req.body.metadata) || "",
-      type: String(req.body.type) || "",
+      msg: req.body.msg,
+      title: req.body.title,
+      metadata: req.body.metadata,
+      type: req.body.type,
     },
-    // tokens: [notificationToken],
+    tokens: [notificationToken],
   };
 
   sendNotification(notificationToken, message);

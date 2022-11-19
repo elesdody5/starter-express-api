@@ -1,5 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const Category = require("../models/categoryModel");
+const cloudinary = require("../utils/cloudinaryConfiguration");
 
 const {
   handleStoringImageAndCreatingElement,

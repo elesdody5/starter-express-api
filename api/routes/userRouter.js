@@ -40,12 +40,14 @@ router.get(
   checkForIdExistenceAndValidityService,
   getUsersByService
 );
+
 router.get("/verifyPhoneNumber", verifyPhoneNumber);
 
 // Endpoint for updating the token
 router.patch("/notificationToken", updateNotificationToken);
 
 router.route("/").get(getAllUsers);
+
 router
   .route("/user")
   .get(getUserById)
