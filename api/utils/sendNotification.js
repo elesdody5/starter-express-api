@@ -23,7 +23,7 @@ exports.sendNotification = async (registrationToken, message) => {
     .messaging()
     .sendMulticast(message)
     .then((response1) => {
-      console.log(response1.results);
+      console.log(response1);
     })
     .catch((err) => console.log("Error in sending message", err));
 };

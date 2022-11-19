@@ -348,7 +348,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
     tokens: registrationTokens,
   };
 
-  sendNotification(message);
+  sendNotification(notificationToken, message);
   res.status(200).json({
     status: "success",
   });
