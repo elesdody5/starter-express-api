@@ -196,7 +196,6 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     quickOrders.map((quickOrder) => {
       for (let i = 0; i < foundRecords.length; i++) {
         if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
-          console.log(count);
           data.push({
             ...quickOrder._doc,
             audio: foundRecords[i].audio,
@@ -255,7 +254,6 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     quickOrders.map((quickOrder) => {
       for (let i = 0; i < foundRecords.length; i++) {
         if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
-          console.log(count);
           data.push({
             ...quickOrder._doc,
             audio: foundRecords[i].audio,
@@ -403,7 +401,6 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
   quickOrders.map((quickOrder) => {
     for (let i = 0; i < foundRecords.length; i++) {
       if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
-        console.log(count);
         data.push({
           ...quickOrder._doc,
           audio: foundRecords[i].audio,
