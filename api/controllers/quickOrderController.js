@@ -193,6 +193,17 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     });
 
     let data = [];
+    quickOrders.map((quickOrder) => {
+      for (let i = 0; i < foundRecords.length; i++) {
+        if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
+          console.log(count);
+          data.push({
+            ...quickOrder._doc,
+            audio: foundRecords[i].audio,
+          });
+        }
+      }
+    });
     if (foundRecords.length === 0) {
       res.status(200).json({
         status: "success",
@@ -240,6 +251,18 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     });
 
     let data = [];
+    //Adding audio to the quick orders
+    quickOrders.map((quickOrder) => {
+      for (let i = 0; i < foundRecords.length; i++) {
+        if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
+          console.log(count);
+          data.push({
+            ...quickOrder._doc,
+            audio: foundRecords[i].audio,
+          });
+        }
+      }
+    });
 
     if (foundRecords.length === 0) {
       res.status(200).json({
@@ -373,8 +396,21 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
       $in: quickOrderIds,
     },
   });
+  console.log("foundRecors", foundRecords);
 
   let data = [];
+  //Adding audio to the quick orders
+  quickOrders.map((quickOrder) => {
+    for (let i = 0; i < foundRecords.length; i++) {
+      if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
+        console.log(count);
+        data.push({
+          ...quickOrder._doc,
+          audio: foundRecords[i].audio,
+        });
+      }
+    }
+  });
 
   if (foundRecords.length === 0) {
     res.status(200).json({
