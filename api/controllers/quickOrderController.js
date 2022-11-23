@@ -233,7 +233,9 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
 
       res.status(200).json({
         status: "success",
-        data: filteredData,
+        data: filteredData.sort(function (a, b) {
+          return new Date(b.date) - new Date(a.date);
+        }),
       });
     }
   } else {
@@ -292,7 +294,9 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
 
       res.status(200).json({
         status: "success",
-        data: filteredData,
+        data: filteredData.sort(function (a, b) {
+          return new Date(b.date) - new Date(a.date);
+        }),
       });
     }
   }
@@ -306,13 +310,22 @@ exports.getAllQuickOrders = catchAsync(async (req, res, next) => {
     .populate("delivery");
 
   let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
-  let mySet = new Set();
   let foundRecords = await Record.find({
     quickOrder: {
       $in: quickOrderIds,
     },
   });
   let data = [];
+  quickOrders.map((quickOrder) => {
+    for (let i = 0; i < foundRecords.length; i++) {
+      if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
+        data.push({
+          ...quickOrder._doc,
+          audio: foundRecords[i].audio,
+        });
+      }
+    }
+  });
   if (foundRecords.length === 0) {
     res.status(200).json({
       status: "success",
@@ -342,7 +355,9 @@ exports.getAllQuickOrders = catchAsync(async (req, res, next) => {
     });
     res.status(200).json({
       status: "success",
-      data: filteredData,
+      data: filteredData.sort(function (a, b) {
+        return new Date(b.date) - new Date(a.date);
+      }),
     });
   }
 });
@@ -394,7 +409,6 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
       $in: quickOrderIds,
     },
   });
-  console.log("foundRecors", foundRecords);
 
   let data = [];
   //Adding audio to the quick orders
@@ -413,7 +427,9 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: "success",
       count: quickOrders.length,
-      data: quickOrders,
+      data: quickOrders.sort(function (a, b) {
+        return new Date(b.date) - new Date(a.date);
+      }),
     });
   } else {
     //Matching the Audio URL from record schema to the correlated quickorder
@@ -441,7 +457,9 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: "success",
       count: quickOrders.length,
-      data: filteredData,
+      data: filteredData.sort(function (a, b) {
+        return new Date(b.date) - new Date(a.date);
+      }),
     });
   }
 });
