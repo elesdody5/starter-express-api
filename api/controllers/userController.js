@@ -2,7 +2,6 @@ const AppError = require("../utils/appError");
 const User = require("./../models/userModel");
 const Shop = require("./../models/shopModel");
 const Review = require("./../models/reviewModel");
-const { format } = require("util");
 const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 const admin = require("firebase-admin");
@@ -10,15 +9,14 @@ const admin = require("firebase-admin");
 let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
 const certPath = admin.credential.cert(serviceAcc);
 
-const {
-  handleStoringImageAndCreatingElement,
-  handleUpdatingAndStoringElement,
-} = require("../utils/firebaseStorage");
+const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 const Notification = require("./../models/notificationModel");
 
 const {
   sendNotification,
   sendMultipleNotification,
+  sendSingleNotificationViaAPI,
+  sendMultipleNotificationViaAPI,
 } = require("../utils/sendNotification");
 var mongoose = require("mongoose");
 
@@ -104,54 +102,6 @@ exports.getUserByType = catchAsync(async (req, res, next) => {
 exports.updateUserById = catchAsync(async (req, res, next) => {
   let { userId } = req.query;
   handleUpdatingAndStoringElement("users", req, res, userId);
-  // if (req.file) {
-  //   const blob = bucket.file(`users/${req.file.originalname}`);
-  //   const blobStream = blob.createWriteStream();
-  //   blobStream.on('finish', async () => {
-  //     // The public URL can be used to directly access the file via HTTP.
-  //     publicUrl = format(
-  //       `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-  //     );
-  //   });
-
-  //   let photoUrl = `https://storage.googleapis.com/${bucket.name}/users/${req.file.originalname}`;
-  //   let wholeBody = { ...req.body, photo: photoUrl };
-
-  //   const updatedUser = await User.findOneAndUpdate(
-  //     { _id: userId },
-  //     wholeBody,
-  //     {
-  //       new: true,
-  //       runValidators: true,
-  //     }
-  //   );
-  //   res.status(200).json({
-  //     status: 'success',
-  //     updatedUser,
-  //   });
-  //   blobStream.end(req.file.buffer);
-  // } else {
-  //   let reqBodyLength = Object.keys(req.body).length;
-
-  //   if (reqBodyLength === 0) {
-  //     return next(new AppError(ErrorMsgs.NO_BODY, 400));
-  //   }
-  //   if (!userId) {
-  //     return next(new AppError(ErrorMsgs.NO_USER_ID, 400));
-  //   }
-  //   const updatedUser = await User.findOneAndUpdate(
-  //     { _id: req.query.userId },
-  //     req.body,
-  //     {
-  //       new: true,
-  //       runValidators: true,
-  //     }
-  //   );
-  //   res.status(200).json({
-  //     status: 'success',
-  //     updatedUser,
-  //   });
-  // }
 });
 
 //@desc Get Users By service
@@ -220,19 +170,11 @@ exports.notifyDeliveryAndShops = catchAsync(async (req, res, next) => {
       .map((owner) => owner.notificationToken)
       .filter((token) => token);
 
-    const message = {
-      data: {
-        userType: "vendor",
-        type: "order",
-      },
-      topic: "shops",
-    };
     //This condition is to make sure that there is shopOwnerRegisterationsTokens in the array.
     if (shopOwnerRegistrationTokens.length > 0) {
-      sendMultipleNotification(
+      sendMultipleNotificationViaAPI(
         shopOwnerRegistrationTokens,
-        message,
-        "shops",
+        { userType: "vendor", type: "order" },
         res
       );
     }
@@ -246,15 +188,18 @@ exports.notifyDeliveryAndShops = catchAsync(async (req, res, next) => {
     let shopOwnerDoc = await User.findOne({ _id: shopOwnerId });
 
     let shopOwnerRegistrationToken = shopOwnerDoc.notificationToken;
-    var payload = {
-      data: {
-        type: "order",
-        userType: "vendor",
-        shopId: String(shopToBeNotified._id),
-      },
-    };
+
     if (shopOwnerRegistrationToken !== null) {
-      sendNotification(shopOwnerRegistrationToken, payload);
+      // sendNotification(shopOwnerRegistrationToken, payload);
+      sendSingleNotificationViaAPI(
+        shopOwnerRegistrationToken,
+        {
+          type: "order",
+          userType: "vendor",
+          shopId: String(shopToBeNotified._id),
+        },
+        res
+      );
     }
   }
 
@@ -265,15 +210,15 @@ exports.notifyDeliveryAndShops = catchAsync(async (req, res, next) => {
     .filter((token) => token);
   // Will be sent to all the delivery in the system
 
-  const message = {
-    data: {
-      userType: "delivery",
-      type: "order",
-    },
-    topic: "users",
-  };
   if (userRegistrationTokens.length > 0) {
-    sendMultipleNotification(userRegistrationTokens, message, "users", res);
+    sendMultipleNotificationViaAPI(
+      userRegistrationTokens,
+      {
+        userType: "delivery",
+        type: "order",
+      },
+      res
+    );
   }
   res.json({
     success: "success",
@@ -303,26 +248,15 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
   const userRegistrationTokens = users
     .map((user) => user.notificationToken)
     .filter((token) => token);
-  const message = {
-    data: {
-      msg: String(req.body.msg) || "",
-      title: String(req.body.title) || "",
-      type: "announcement",
-    },
-    // topic: "users",
-  };
 
   if (userRegistrationTokens.length > 0) {
-    // sendMultipleNotification(userRegistrationTokens, message, "users", res);
-    for (let i = 0; i < userRegistrationTokens.length; i++) {
-      await sendNotification(userRegistrationTokens[i], message);
-    }
-    await Notification.create(req.body);
+    sendMultipleNotificationViaAPI(
+      userRegistrationTokens,
+      { title: req.body.title || "", msg: req.body.msg || "" },
+      res
+    );
   }
-  console.log(userRegistrationTokens);
-  // if (userRegistrationTokens.length > 0) {
-  //   await sendMultipleNotification(userRegistrationTokens, message, "sss", res);
-  // }
+
   await Notification.create(req.body);
   res.status(200).json({
     status: "success",
@@ -331,52 +265,16 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
 exports.notifySingleUser = catchAsync(async (req, res, next) => {
   let userId = req.query.userId;
   const user = await User.findOne({ _id: userId });
-
   let notificationToken = user.notificationToken;
 
-  let registrationTokens = [
-    String(
-      "ek8NAupYTlu4gH-Ks2ELP7%3AAPA91bGcZw2lm7klQ9ASkGTymRBLy6gmlzj-pR67KBGXQcZyOB_FOTMbDVIdCMRDeVe4GqtSyJhFuKdYKRfEdLTlmL0wJ5vCoc7tTw50O5SyIqQk10OBu6yfxm4Tuqz6CCKIKLWOQ68l".replace(
-        "%",
-        ":"
-      )
-    ),
-  ];
-
-  const message = {
-    data: {
-      msg: req.body.msg,
-      title: req.body.title,
-      metadata: req.body.metadata,
-      type: req.body.type,
-    },
-    tokens: registrationTokens,
-  };
-
-  sendNotification(notificationToken, message);
+  ///////////////////////////
+  sendSingleNotificationViaAPI(notificationToken, {
+    title: req.body.title || "",
+    msg: req.body.msg || "",
+    type: req.body.type || "",
+    metadata: req.body.metadata || "",
+  });
   res.status(200).json({
     status: "success",
   });
-
-  // var message = {
-  //   //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-  //   to: notificationToken,
-  //   notification: {
-  //     msg: String(req.body.msg) || "",
-  //     title: String(req.body.title) || "",
-  //     metadata: String(req.body.metadata) || "",
-  //     type: String(req.body.type) || "",
-  //   },
-  // };
-  // fcm.send(message, function (err, response) {
-  //   console.log("inside");
-  //   if (err) {
-  //     console.log("Something has gone wrong!", err);
-  //   } else {
-  //     console.log("Successfully sent with response: ", response);
-  //   }
-  // });
-  // res.status(200).json({
-  //   status: "success",
-  // });
 });

@@ -7,15 +7,8 @@ const ErrorMsgs = require("./../utils/ErrorMsgsConstants");
 const Record = require("../models/recordModel");
 const cloudinary = require("../utils/cloudinaryConfiguration");
 
-// const { bucket } = require("../utils/firebaseStorage");
-const {
-  sendMultipleNotification,
-  sendNotification,
-} = require("../utils/sendNotification");
-const {
-  handleStoringImageAndCreatingElement,
-  handleUpdatingAndStoringElement,
-} = require("../utils/firebaseStorage");
+const { sendMultipleNotificationViaAPI } = require("../utils/sendNotification");
+const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 const { arrayBuffer } = require("stream/consumers");
 const { join } = require("path");
 // const { bucket } = require("../utils/test");
@@ -43,19 +36,17 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
       .filter((token) => token);
 
     userRegistrationTokens = [...new Set(userRegistrationTokens)];
-    // Will be sent to all the delivery in the system
-    const message = {
-      data: {
-        userType: String(req.query.userType),
-        type: "quickOrder",
-      },
-    };
 
-    // if (userRegistrationTokens.length > 0) {
-    //   for (let i = 0; i < userRegistrationTokens.length; i++) {
-    //     await sendNotification(userRegistrationTokens[i], message);
-    //   }
-    // }
+    if (userRegistrationTokens.length > 0) {
+      sendMultipleNotificationViaAPI(
+        userRegistrationTokens,
+        {
+          userType: String(req.query.userType),
+          type: "quickOrder",
+        },
+        res
+      );
+    }
 
     res.status(200).json({
       status: "success",
@@ -79,19 +70,17 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
       .map((user) => user.notificationToken)
       .filter((token) => token);
     // Will be sent to all the delivery in the system
-    const message = {
-      data: {
-        userType: String(req.query.userType) || "",
-        type: "quickOrder",
-      },
-      // topic: "users",
-    };
-    // if (userRegistrationTokens.length > 0) {
-    //   for (let i = 0; i < userRegistrationTokens.length; i++) {
-    //     await sendNotification(userRegistrationTokens[i], message);
-    //   }
-    //   // sendMultipleNotification(userRegistrationTokens, message, "users", res);
-    // }
+
+    if (userRegistrationTokens.length > 0) {
+      sendMultipleNotificationViaAPI(
+        userRegistrationTokens,
+        {
+          userType: String(req.query.userType) || "",
+          type: "quickOrder",
+        },
+        res
+      );
+    }
 
     res.status(200).json({
       status: "success",

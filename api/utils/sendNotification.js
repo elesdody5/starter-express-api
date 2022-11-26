@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const axios = require("axios");
 
 var serviceAccount = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
 
@@ -65,5 +66,60 @@ exports.sendMultipleNotification = async (
     .catch((error) => {
       console.log("Error sending message:", error);
       res.json(error);
+    });
+};
+
+exports.sendSingleNotificationViaAPI = async (token, data) => {
+  let DATA = [
+    {
+      token: token,
+      data: data,
+    },
+  ];
+  let HEADER = {
+    headers: {
+      Accept: "application/json",
+      "x-api-key": "lfcFQxKrQBofAWpbNGPBQayBuHIPlNrD",
+    },
+  };
+  axios
+    .post(
+      "https://notification-cs.herokuapp.com/api/v1/notifications",
+      DATA,
+      HEADER
+    )
+    .then((response) => {
+      console.log("Req body:", response.data);
+      console.log("Req header :", response.headers);
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+};
+exports.sendMultipleNotificationViaAPI = async (tokens, data, res) => {
+  let DATA = {
+    tokens: tokens,
+    data: data,
+  };
+
+  console.log("tokens>>>>", tokens);
+  const HEADER = {
+    headers: {
+      Accept: "application/json",
+      "x-api-key": "lfcFQxKrQBofAWpbNGPBQayBuHIPlNrD",
+    },
+  };
+  axios
+    .post(
+      "https://notification-cs.herokuapp.com/api/v1/multiCastNotification",
+      DATA,
+      HEADER
+    )
+    .then((response) => {
+      console.log("Req body:", response.data);
+      console.log("Req header :", response.headers);
+    })
+    .catch((e) => {
+      console.error(e);
     });
 };
