@@ -4,15 +4,6 @@ const Shop = require("./../models/shopModel");
 const Review = require("./../models/reviewModel");
 const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
-const admin = require("firebase-admin");
-var FCM = require("fcm-node");
-let serverKey =
-  "AAAAnHaWUDI:APA91bHpNW0mH1W53uRPxpAB1li7nZhBNHcTl3E4dJ2bjoVq1IsNVijnEWPAgfaus9BmwJSMgbSeUtReSSX1BVbMi02O98D3WgtAk9tqRjJQvJy3juHtVO3UJYAoYnkj8e4sT1IUqb3G";
-
-let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
-// let serviceAcc = require("../../hosttestapp-55cc1-firebase-adminsdk-vogrp-4e46b73915.json");
-
-let fcm = new FCM(serviceAcc);
 
 const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 const Notification = require("./../models/notificationModel");
@@ -272,31 +263,31 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
   let notificationToken = user.notificationToken;
 
-  // if (notificationToken !== "") {
-  //   await sendSingleNotificationUsingFCM(notificationToken, {
-  //     title: req.body.title || "",
-  //     msg: req.body.msg || "",
-  //     type: req.body.type || "",
-  //     metadata: req.body.metadata || "",
-  //   });
-  // }
-
-  let message = {
-    to: String(notificationToken),
-    data: {
+  if (notificationToken !== "") {
+    await sendSingleNotificationUsingFCM(notificationToken, {
       title: req.body.title || "",
       msg: req.body.msg || "",
       type: req.body.type || "",
       metadata: req.body.metadata || "",
-    },
-  };
-  fcm.send(message, (err, response) => {
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response.results);
-    }
-  });
+    });
+  }
+
+  // let message = {
+  //   to: String(notificationToken),
+  //   data: {
+  //     title: req.body.title || "",
+  //     msg: req.body.msg || "",
+  //     type: req.body.type || "",
+  //     metadata: req.body.metadata || "",
+  //   },
+  // };
+  // fcm.send(message, (err, response) => {
+  //   if (err) {
+  //     console.log("Something has gone wrong!", err);
+  //   } else {
+  //     console.log("Successfully sent with response: ", response.results);
+  //   }
+  // });
 
   res.status(200).json({
     status: "success",

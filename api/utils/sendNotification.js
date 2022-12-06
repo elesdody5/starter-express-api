@@ -2,8 +2,8 @@ const admin = require("firebase-admin");
 const axios = require("axios");
 var FCM = require("fcm-node");
 
-// let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
-// let fcm = new FCM(serviceAcc);
+let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
+let fcm = new FCM(serviceAcc);
 
 // admin.initializeApp({
 //   credential: admin.credential.cert(serviceAccount),
@@ -125,16 +125,16 @@ exports.sendMultipleNotificationViaAPI = async (tokens, data, res) => {
       console.error(e);
     });
 };
-// exports.sendSingleNotificationUsingFCM = async (token, data) => {
-//   let message = {
-//     to: String(token),
-//     data: data,
-//   };
-//   await fcm.send(message, (err, response) => {
-//     if (err) {
-//       console.log("Something has gone wrong!", err);
-//     } else {
-//       console.log("Successfully sent with response: ", response.results);
-//     }
-//   });
-// };
+exports.sendSingleNotificationUsingFCM = async (token, data) => {
+  let message = {
+    to: String(token),
+    data: data,
+  };
+  fcm.send(message, (err, response) => {
+    if (err) {
+      console.log("Something has gone wrong!", err);
+    } else {
+      console.log("Successfully sent with response: ", response.results);
+    }
+  });
+};
