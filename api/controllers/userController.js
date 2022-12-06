@@ -272,12 +272,14 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
   let notificationToken = user.notificationToken;
 
-  await sendSingleNotificationUsingFCM(notificationToken, {
-    title: req.body.title || "",
-    msg: req.body.msg || "",
-    type: req.body.type || "",
-    metadata: req.body.metadata || "",
-  });
+  if (notificationToken !== "") {
+    await sendSingleNotificationUsingFCM(notificationToken, {
+      title: req.body.title || "",
+      msg: req.body.msg || "",
+      type: req.body.type || "",
+      metadata: req.body.metadata || "",
+    });
+  }
 
   // let message = {
   //   to: String(notificationToken),
