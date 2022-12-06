@@ -272,7 +272,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
   let notificationToken = user.notificationToken;
 
-  await sendSingleNotificationUsingFCM(notificationToken, {
+  sendSingleNotificationUsingFCM(notificationToken, {
     title: req.body.title || "",
     msg: req.body.msg || "",
     type: req.body.type || "",
