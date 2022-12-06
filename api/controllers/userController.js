@@ -255,11 +255,25 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
     .filter((token) => token);
 
   if (userRegistrationTokens.length > 0) {
-    sendMultipleNotificationViaAPI(
-      userRegistrationTokens,
-      { title: req.body.title || "", msg: req.body.msg || "" },
-      res
-    );
+    // sendMultipleNotificationViaAPI(
+    //   userRegistrationTokens,
+    //   { title: req.body.title || "", msg: req.body.msg || "" },
+    //   res
+    // );
+    let message = {
+      to: userRegistrationTokens,
+      data: {
+        title: req.body.title || "",
+        msg: req.body.msg || "",
+      },
+    };
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.log("Something has gone wrong!", err);
+      } else {
+        console.log("Successfully sent with response: ", response.results);
+      }
+    });
   }
 
   await Notification.create(req.body);
