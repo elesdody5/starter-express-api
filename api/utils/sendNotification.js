@@ -1,7 +1,8 @@
 const admin = require("firebase-admin");
 const axios = require("axios");
 
-var serviceAccount = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
+let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
+let fcm = new FCM(serviceAcc);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
