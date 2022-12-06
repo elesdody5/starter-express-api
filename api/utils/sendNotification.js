@@ -125,7 +125,7 @@ exports.sendMultipleNotificationViaAPI = async (tokens, data, res) => {
       console.error(e);
     });
 };
-exports.sendSingleNotificationUsingFCM =  (token, data) => {
+exports.sendSingleNotificationUsingFCM = async (token, data) => {
   let message = {
     to: String(token),
     data: data,

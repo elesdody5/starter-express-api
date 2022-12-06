@@ -255,7 +255,7 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
 
   if (userRegistrationTokens.length > 0) {
     for (let i = 0; i < userRegistrationTokens.length; i++) {
-      sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
+      await sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
         title: req.body.title || "",
         msg: req.body.msg || "",
       });
@@ -272,7 +272,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
   let notificationToken = user.notificationToken;
 
-  sendSingleNotificationUsingFCM(notificationToken, {
+  await sendSingleNotificationUsingFCM(notificationToken, {
     title: req.body.title || "",
     msg: req.body.msg || "",
     type: req.body.type || "",
