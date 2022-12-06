@@ -5,9 +5,9 @@ var FCM = require("fcm-node");
 let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
 let fcm = new FCM(serviceAcc);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
 //This function takes notification token and payload and it sends notification to a proper device
 exports.sendNotification = async (registrationToken, message) => {
