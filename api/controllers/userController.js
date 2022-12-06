@@ -18,9 +18,8 @@ const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 const Notification = require("./../models/notificationModel");
 
 const {
-  sendNotification,
-  sendMultipleNotification,
   sendSingleNotificationViaAPI,
+  sendSingleNotificationUsingFCM,
   sendMultipleNotificationViaAPI,
 } = require("../utils/sendNotification");
 var mongoose = require("mongoose");
@@ -255,25 +254,10 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
     .filter((token) => token);
 
   if (userRegistrationTokens.length > 0) {
-    // sendMultipleNotificationViaAPI(
-    //   userRegistrationTokens,
-    //   { title: req.body.title || "", msg: req.body.msg || "" },
-    //   res
-    // );
     for (let i = 0; i < userRegistrationTokens.length; i++) {
-      let message = {
-        to: String(userRegistrationTokens[i]),
-        data: {
-          title: req.body.title || "",
-          msg: req.body.msg || "",
-        },
-      };
-      fcm.send(message, (err, response) => {
-        if (err) {
-          console.log("Something has gone wrong!", err);
-        } else {
-          console.log("Successfully sent with response: ", response.results);
-        }
+      await sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
+        title: req.body.title || "",
+        msg: req.body.msg || "",
       });
     }
   }
@@ -288,30 +272,29 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ _id: userId });
   let notificationToken = user.notificationToken;
 
-  ///////////////////////////
-  // sendSingleNotificationViaAPI(notificationToken, {
-  //   title: req.body.title || "",
-  //   msg: req.body.msg || "",
-  //   type: req.body.type || "",
-  //   metadata: req.body.metadata || "",
-  // });
-
-  let message = {
-    to: String(notificationToken),
-    data: {
-      title: req.body.title || "",
-      msg: req.body.msg || "",
-      type: req.body.type || "",
-      metadata: req.body.metadata || "",
-    },
-  };
-  fcm.send(message, (err, response) => {
-    if (err) {
-      console.log("Something has gone wrong!", err);
-    } else {
-      console.log("Successfully sent with response: ", response.results);
-    }
+  await sendSingleNotificationUsingFCM(notificationToken, {
+    title: req.body.title || "",
+    msg: req.body.msg || "",
+    type: req.body.type || "",
+    metadata: req.body.metadata || "",
   });
+
+  // let message = {
+  //   to: String(notificationToken),
+  //   data: {
+  //     title: req.body.title || "",
+  //     msg: req.body.msg || "",
+  //     type: req.body.type || "",
+  //     metadata: req.body.metadata || "",
+  //   },
+  // };
+  // fcm.send(message, (err, response) => {
+  //   if (err) {
+  //     console.log("Something has gone wrong!", err);
+  //   } else {
+  //     console.log("Successfully sent with response: ", response.results);
+  //   }
+  // });
 
   res.status(200).json({
     status: "success",
