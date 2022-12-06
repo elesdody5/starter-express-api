@@ -167,11 +167,12 @@ exports.notifyDeliveryAndShops = catchAsync(async (req, res, next) => {
 
     //This condition is to make sure that there is shopOwnerRegisterationsTokens in the array.
     if (shopOwnerRegistrationTokens.length > 0) {
-      sendMultipleNotificationViaAPI(
-        shopOwnerRegistrationTokens,
-        { userType: "vendor", type: "order" },
-        res
-      );
+      for (let i = 0; i < shopOwnerRegistrationTokens.length; i++) {
+        sendSingleNotificationUsingFCM(shopOwnerRegistrationTokens[i], {
+          userType: "vendor",
+          type: "order",
+        });
+      }
     }
   } else {
     let shopId = req.body.shopIds[0];
@@ -185,16 +186,11 @@ exports.notifyDeliveryAndShops = catchAsync(async (req, res, next) => {
     let shopOwnerRegistrationToken = shopOwnerDoc.notificationToken;
 
     if (shopOwnerRegistrationToken !== null) {
-      // sendNotification(shopOwnerRegistrationToken, payload);
-      sendSingleNotificationViaAPI(
-        shopOwnerRegistrationToken,
-        {
-          type: "order",
-          userType: "vendor",
-          shopId: String(shopToBeNotified._id),
-        },
-        res
-      );
+      await sendSingleNotificationUsingFCM(shopOwnerRegistrationToken, {
+        type: "order",
+        userType: "vendor",
+        shopId: String(shopToBeNotified._id),
+      });
     }
   }
 
@@ -206,14 +202,12 @@ exports.notifyDeliveryAndShops = catchAsync(async (req, res, next) => {
   // Will be sent to all the delivery in the system
 
   if (userRegistrationTokens.length > 0) {
-    sendMultipleNotificationViaAPI(
-      userRegistrationTokens,
-      {
+    for (let i = 0; i < userRegistrationTokens.length; i++) {
+      await sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
         userType: "delivery",
         type: "order",
-      },
-      res
-    );
+      });
+    }
   }
   res.json({
     success: "success",
