@@ -282,7 +282,7 @@ exports.notifySingleUser = catchAsync(async (req, res, next) => {
 
   let message = {
     to: String(notificationToken),
-    notification: {
+    data: {
       title: req.body.title || "",
       msg: req.body.msg || "",
       type: req.body.type || "",
