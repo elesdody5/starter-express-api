@@ -7,7 +7,7 @@ const ErrorMsgs = require("./../utils/ErrorMsgsConstants");
 const Record = require("../models/recordModel");
 const cloudinary = require("../utils/cloudinaryConfiguration");
 
-const { sendMultipleNotificationViaAPI } = require("../utils/sendNotification");
+const { sendSingleNotificationUsingFCM } = require("../utils/sendNotification");
 const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 const { arrayBuffer } = require("stream/consumers");
 const { join } = require("path");
@@ -38,14 +38,12 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     userRegistrationTokens = [...new Set(userRegistrationTokens)];
 
     if (userRegistrationTokens.length > 0) {
-      sendMultipleNotificationViaAPI(
-        userRegistrationTokens,
-        {
+      for (let i = 0; i < userRegistrationTokens.length; i++) {
+        sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
           userType: String(req.query.userType),
           type: "quickOrder",
-        },
-        res
-      );
+        });
+      }
     }
 
     res.status(200).json({
@@ -72,14 +70,12 @@ exports.addQuickOrder = catchAsync(async (req, res, next) => {
     // Will be sent to all the delivery in the system
 
     if (userRegistrationTokens.length > 0) {
-      sendMultipleNotificationViaAPI(
-        userRegistrationTokens,
-        {
-          userType: String(req.query.userType) || "",
+      for (let i = 0; i < userRegistrationTokens.length; i++) {
+        sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
+          userType: String(req.query.userType),
           type: "quickOrder",
-        },
-        res
-      );
+        });
+      }
     }
 
     res.status(200).json({

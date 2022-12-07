@@ -8,11 +8,7 @@ const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 const Notification = require("./../models/notificationModel");
 
-const {
-  sendSingleNotificationViaAPI,
-  sendSingleNotificationUsingFCM,
-  sendMultipleNotificationViaAPI,
-} = require("../utils/sendNotification");
+const { sendSingleNotificationUsingFCM } = require("../utils/sendNotification");
 var mongoose = require("mongoose");
 
 //@desc Get All Users
