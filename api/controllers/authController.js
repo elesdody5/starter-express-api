@@ -234,7 +234,7 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.verifyAndReset = catchAsync(async (req, res, next) => {
-  let { phone, code } = req.query;
+  let { phone } = req.query;
   // let response = await client.verify
   //   .services('MGf0921b7a2dc28940d9ba8866b7ab6899')
   //   .verificationChecks.create({
@@ -259,18 +259,14 @@ exports.verifyAndReset = catchAsync(async (req, res, next) => {
   //   console.log('failed');
   // }
 
-  if (user.code == code) {
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    await user.save();
-    //3)Log the user in, send JWT
-    const token = signToken(user._id);
-    res.status(200).json({
-      status: "success",
-      token,
-      user,
-    });
-  } else {
-    return next(new AppError("OPS!"));
-  }
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  //3)Log the user in, send JWT
+  const token = signToken(user._id);
+  res.status(200).json({
+    status: "success",
+    token,
+    user,
+  });
 });

@@ -129,6 +129,7 @@ exports.sendSingleNotificationUsingFCM = async (token, data) => {
   let message = {
     to: String(token),
     data: data,
+    notification: {},
   };
   fcm.send(message, (err, response) => {
     if (err) {

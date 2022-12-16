@@ -9,9 +9,7 @@ const cloudinary = require("../utils/cloudinaryConfiguration");
 
 const { sendSingleNotificationUsingFCM } = require("../utils/sendNotification");
 const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
-const { arrayBuffer } = require("stream/consumers");
-const { join } = require("path");
-// const { bucket } = require("../utils/test");
+
 const { Storage } = require("@google-cloud/storage");
 
 const storage = new Storage({
@@ -25,9 +23,6 @@ let bucket = storage.bucket("gs://delivery-app-5e621.appspot.com");
 //access PUBLIC
 //NOTE we pass here the user who made the quick order in the body of the req.
 exports.addQuickOrder = catchAsync(async (req, res, next) => {
-  // let quickOrder = await QuickOrder.create(req.body);
-  // handleStoringImageAndCreatingElement("quickOrders", req, res);
-
   if (!req.file) {
     let createdElement = await QuickOrder.create(req.body);
     const users = await User.find({ userType: "delivery" });
@@ -252,7 +247,9 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
     if (foundRecords.length === 0) {
       res.status(200).json({
         status: "success",
-        data: quickOrders,
+        data: quickOrders.sort(function (a, b) {
+          return new Date(b.date) - new Date(a.date);
+        }),
       });
     } else {
       quickOrders.map((quickOrder) => {
