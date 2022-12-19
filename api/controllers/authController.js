@@ -258,15 +258,19 @@ exports.verifyAndReset = catchAsync(async (req, res, next) => {
   // } else {
   //   console.log('failed');
   // }
-
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  await user.save();
-  //3)Log the user in, send JWT
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: "success",
-    token,
-    user,
-  });
+  if (!user || user === null || user === undefined) {
+    console.log(user);
+    return next(new AppError("عفوا هذا الرقم غير صحيح", 400));
+  } else {
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+    //3)Log the user in, send JWT
+    const token = signToken(user._id);
+    res.status(200).json({
+      status: "success",
+      token,
+      user,
+    });
+  }
 });
