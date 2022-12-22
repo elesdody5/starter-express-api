@@ -26,7 +26,6 @@
   "dependencies": {
     "@firebase/storage": "^0.9.9",
     "@google-cloud/storage": "^5.15.5",
-    "axios": "^1.2.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.31.0",
     "compression": "^1.7.4",
