@@ -229,8 +229,11 @@ exports.deleteUserById = catchAsync(async (req, res, next) => {
 //access PUBLIC
 exports.notifyAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find({ userType: "user" });
+  const vendors = await User.find({ userType: "vendor" });
 
-  const userRegistrationTokens = users
+  let data = [...users,...vendors]
+
+  const userRegistrationTokens = data
     .map((user) => user.notificationToken)
     .filter((token) => token);
 

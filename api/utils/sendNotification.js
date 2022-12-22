@@ -5,9 +5,6 @@ var FCM = require("fcm-node");
 let serviceAcc = require("../../delivery-app-5e621-firebase-adminsdk-kjin7-392a4a1fae.json");
 let fcm = new FCM(serviceAcc);
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
 
 //This function takes notification token and payload and it sends notification to a proper device
 exports.sendNotification = async (registrationToken, message) => {
@@ -15,11 +12,6 @@ exports.sendNotification = async (registrationToken, message) => {
     priority: "high",
     timeToLive: 60 * 60 * 24,
   };
-  // let messageClone = {
-  //   ...payload,
-  //   token: registrationToken,
-  // };
-
   console.log("before notification", message);
 
   admin
@@ -55,7 +47,6 @@ exports.sendMultipleNotification = async (
     tokens: registrationTokens,
   };
 
-  console.log("YAHOOOOOO");
 
   admin
     .messaging()
@@ -70,61 +61,8 @@ exports.sendMultipleNotification = async (
       res.json(error);
     });
 };
-console.log("HIIII")
-// exports.sendSingleNotificationViaAPI = async (token, data) => {
-//   let DATA = [
-//     {
-//       token: token,
-//       data: data,
-//     },
-//   ];
-//   let HEADER = {
-//     headers: {
-//       Accept: "application/json",
-//       "x-api-key": "lfcFQxKrQBofAWpbNGPBQayBuHIPlNrD",
-//     },
-//   };
-//   axios
-//     .post(
-//       "https://notification-cs.herokuapp.com/api/v1/notifications",
-//       DATA,
-//       HEADER
-//     )
-//     .then((response) => {
-//       console.log("Req body:", response.data);
-//       console.log("Req header :", response.headers);
-//     })
-//     .catch((e) => {
-//       console.error(e);
-//     });
-// };
-// exports.sendMultipleNotificationViaAPI = async (tokens, data, res) => {
-//   let DATA = {
-//     tokens: tokens,
-//     data: data,
-//   };
 
-//   console.log("tokens>>>>", tokens);
-//   const HEADER = {
-//     headers: {
-//       Accept: "application/json",
-//       "x-api-key": "lfcFQxKrQBofAWpbNGPBQayBuHIPlNrD",
-//     },
-//   };
-//   axios
-//     .post(
-//       "https://notification-cs.herokuapp.com/api/v1/multiCastNotification",
-//       DATA,
-//       HEADER
-//     )
-//     .then((response) => {
-//       console.log("Req body:", response.data);
-//       console.log("Req header :", response.headers);
-//     })
-//     .catch((e) => {
-//       console.error(e);
-//     });
-// };
+
 exports.sendSingleNotificationUsingFCM = async (token, data) => {
   let message = {
     to: String(token),
