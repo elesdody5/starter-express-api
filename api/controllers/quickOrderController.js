@@ -141,16 +141,10 @@ exports.getQuickOrderById = catchAsync(async (req, res, next) => {
 exports.updateQuickOrder = catchAsync(async (req, res, next) => {
   let { deliveryId, quickOrderId } = req.query;
   let quickOrder = await QuickOrder.findOne({ _id: quickOrderId });
-  let quickOrders = await QuickOrder.find({})
-  let listOfDeliveryIds =  quickOrders.map(order => String(order.delivery));
-
-  if(!listOfDeliveryIds.includes(deliveryId)){
-    return next(new AppError("من فضلك ادخل الديلفري صحيحا", 400));
-  }
-
+  
   if (quickOrder.delivery) {
-    if (deliveryId ) {
-      return next(new AppError("حدث خطا ما", 400));
+    if (!deliveryId) {
+      return next(new AppError("لقد حدث خطأ ما", 400));
     } else {
       handleUpdatingAndStoringElement("quickOrders", req, res, quickOrderId);
     }
