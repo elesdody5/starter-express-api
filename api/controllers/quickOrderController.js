@@ -144,9 +144,13 @@ exports.updateQuickOrder = catchAsync(async (req, res, next) => {
   let quickOrders = await QuickOrder.find({})
   let listOfDeliveryIds =  quickOrders.map(order => String(order.delivery));
 
+  if(!listOfDeliveryIds.includes(deliveryId)){
+    return next(new AppError("من فضلك ادخل الديلفري صحيحا", 400));
+  }
+
   if (quickOrder.delivery) {
-    if (deliveryId || !listOfDeliveryIds.includes(deliveryId)) {
-      return next(new AppError("من فضلك ادخل الديلفري صحيحا", 400));
+    if (deliveryId ) {
+      return next(new AppError("حدث خطا ما", 400));
     } else {
       handleUpdatingAndStoringElement("quickOrders", req, res, quickOrderId);
     }
