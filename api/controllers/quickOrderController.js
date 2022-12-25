@@ -445,3 +445,26 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
     });
   }
 });
+//@desc Set multiple quick orders delivery to be null
+//@route patch /api/v1/quickOrders/
+//access PUBLIC
+exports.setDeliveryForCertainOrdersToBeNull = catchAsync(async (req, res, next) => {
+  if (req.body.quickOrders.length === 0) {
+    return next(new AppError("من فضلك ادخل الاوردرات صحيحا", 400));
+  }
+  let { quickOrders } = req.body;
+
+  await QuickOrder.updateMany(
+    {
+      _id: {
+        $in: quickOrders,
+      }
+    },
+    {
+      $set: { delivery: null }
+    }
+  );
+  res.status(200).json({
+    status: "success",
+  });
+});

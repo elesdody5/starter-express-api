@@ -11,6 +11,7 @@ const {
   getAllQuickOrders,
   deleteMultipleQuickOrders,
   getQuickOrdersForUser,
+  setDeliveryForCertainOrdersToBeNull
 } = require("./../controllers/quickOrderController");
 
 const {
@@ -37,6 +38,7 @@ router.get(
 );
 
 router.delete("/deleteMany", deleteMultipleQuickOrders);
+router.patch("/setDeliveryNull",setDeliveryForCertainOrdersToBeNull)
 
 router.route("/quickOrdersForDelivery").get(getQuickOrdersForDelivery);
 router
