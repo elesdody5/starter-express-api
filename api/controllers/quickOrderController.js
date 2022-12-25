@@ -141,9 +141,9 @@ exports.getQuickOrderById = catchAsync(async (req, res, next) => {
 exports.updateQuickOrder = catchAsync(async (req, res, next) => {
   let { deliveryId, quickOrderId } = req.query;
   let quickOrder = await QuickOrder.findOne({ _id: quickOrderId });
-  
+
   if (quickOrder.delivery) {
-    if (!deliveryId) {
+    if (deliveryId) {
       return next(new AppError("لقد حدث خطأ ما", 400));
     } else {
       handleUpdatingAndStoringElement("quickOrders", req, res, quickOrderId);
@@ -454,7 +454,8 @@ exports.setDeliveryForCertainOrdersToBeNull = catchAsync(async (req, res, next) 
   }
   let { quickOrders } = req.body;
 
-  await QuickOrder.updateMany(
+
+await QuickOrder.updateMany(
     {
       _id: {
         $in: quickOrders,
