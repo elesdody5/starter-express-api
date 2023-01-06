@@ -75,9 +75,3 @@ exports.checkForIdExistenceAndValidityQuickOrder = (req, res, next) => {
   }
   next();
 };
-exports.checkForIdExistenceAndValidityDelivery = (req, res, next) => {
-   if (req.query.deliveryId.length !== 24) {
-    return next(new AppError(ErrorMsgs.NO_USER_ID, 400));
-  }
-  next();
-};

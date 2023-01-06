@@ -18,7 +18,7 @@ const {
 const {
   checkForIdExistenceAndValidityQuickOrder,
   checkForIdExistenceAndValidityUser,
-  checkForIdExistenceAndValidityDelivery
+
 } = require("../utils/checkForId");
 
 router
@@ -28,7 +28,6 @@ router
   .patch(
     uploadPhoto,
     resizePhoto,
-    checkForIdExistenceAndValidityDelivery,
     checkForIdExistenceAndValidityQuickOrder,
     updateQuickOrder
   )

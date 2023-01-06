@@ -147,7 +147,7 @@ exports.updateQuickOrder = catchAsync(async (req, res, next) => {
  
   if(deliveryId && delivery === null){
     return next(new AppError("لا يوجد مستخدم ", 400));
-  }
+  } 
 
   if (quickOrder.delivery) {
     if (deliveryId) {
