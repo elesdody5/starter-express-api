@@ -143,10 +143,9 @@ exports.updateQuickOrder = catchAsync(async (req, res, next) => {
   let quickOrder = await QuickOrder.findOne({ _id: quickOrderId });
 
   let delivery = await User.findOne({_id: deliveryId});
-  console.log(delivery)
 
  
-  if(delivery === null){
+  if(deliveryId && delivery === null){
     return next(new AppError("لا يوجد مستخدم ", 400));
   }
 
