@@ -461,8 +461,6 @@ exports.updateQuickOrders = catchAsync(async (req, res, next) => {
   }
   let { quickOrders } = req.body;
   
-
-
 await QuickOrder.updateMany(
     {
       _id: {
@@ -476,4 +474,65 @@ await QuickOrder.updateMany(
   res.status(200).json({
     status: "success",
   });
+});
+
+//@desc Get quick orders by status by passing status of the quickOrder as a query param
+//@route GET /api/v1/quickOrders/status
+//access PUBLIC
+exports.getQuickOrdersByStatus = catchAsync(async (req, res, next) => {
+  let quickOrders = await QuickOrder.find({status : req.query.status})
+    .populate("user")
+    .populate("delivery");
+
+  let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
+  let foundRecords = await Record.find({
+    quickOrder: {
+      $in: quickOrderIds,
+    },
+  });
+  let data = [];
+  quickOrders.map((quickOrder) => {
+    for (let i = 0; i < foundRecords.length; i++) {
+      if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
+        data.push({
+          ...quickOrder._doc,
+          audio: foundRecords[i].audio,
+        });
+      }
+    }
+  });
+  if (foundRecords.length === 0) {
+    res.status(200).json({
+      status: "success",
+      data: quickOrders,
+    });
+  } else {
+    quickOrders.map((quickOrder) => {
+      foundRecords.forEach((foundRecord) => {
+        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+        } else {
+          data.push({ ...quickOrder._doc });
+        }
+      });
+    });
+    const uniqueElements = [];
+    let filteredData = data.filter((element) => {
+      const isDuplicate = uniqueElements.includes(element._id);
+
+      if (!isDuplicate) {
+        uniqueElements.push(element._id);
+
+        return true;
+      }
+
+      return false;
+    });
+    res.status(200).json({
+      status: "success",
+      data: filteredData.sort(function (a, b) {
+        return new Date(b.date) - new Date(a.date);
+      }),
+    });
+  }
 });

@@ -18,6 +18,12 @@ const productSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  sizes: [
+    {
+      type: Number
+    },
+  ],
+
 });
 const Product = new mongoose.model('Product', productSchema);
 module.exports = Product;

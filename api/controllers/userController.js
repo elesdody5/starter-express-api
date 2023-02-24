@@ -228,12 +228,33 @@ exports.deleteUserById = catchAsync(async (req, res, next) => {
 //@route Delete /api/v1/users/notifyAllUsers
 //access PUBLIC
 exports.notifyAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find({ userType: "user" });
-  const vendors = await User.find({ userType: "vendor" });
+  // const users = await User.find({ userType: "user" });
+  // const vendors = await User.find({ userType: "vendor" });
 
-  let data = [...users,...vendors]
+  // let data = [...users,...vendors]
 
-  const userRegistrationTokens = data
+  // const userRegistrationTokens = data
+  //   .map((user) => user.notificationToken)
+  //   .filter((token) => token);
+
+  // if (userRegistrationTokens.length > 0) {
+  //   for (let i = 0; i < userRegistrationTokens.length; i++) {
+  //     await sendSingleNotificationUsingFCM(userRegistrationTokens[i], {
+  //       title: req.body.title || "",
+  //       msg: req.body.msg || "",
+  //     });
+  //   }
+  // }
+
+  // await Notification.create(req.body);
+  // res.status(200).json({
+  //   status: "success",
+  // });
+  let userType = req.query.userType
+  const users = await User.find({ userType});
+  
+  // let data = [...users,...vendors]
+  const userRegistrationTokens = users
     .map((user) => user.notificationToken)
     .filter((token) => token);
 
