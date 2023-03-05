@@ -228,7 +228,7 @@ exports.deleteUserById = catchAsync(async (req, res, next) => {
 //@route Delete /api/v1/users/notifyAllUsers
 //access PUBLIC
 exports.notifyAllUsers = catchAsync(async (req, res, next) => {
-  let userType = req.query.userType
+  let userType = req.query.userType;
   const users = await User.find({ userType });
 
   // let data = [...users,...vendors]
