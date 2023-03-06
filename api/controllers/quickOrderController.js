@@ -165,12 +165,18 @@ exports.updateQuickOrder = catchAsync(async (req, res, next) => {
 exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
   let status = req.query?.status;
   if (req.query.deliveryId) {
-    let quickOrders = await QuickOrder.find({
-      delivery: req.query.deliveryId,
-      status,
-    })
-      .populate("delivery")
-      .populate("user");
+    let quickOrders = status
+      ? await QuickOrder.find({
+          delivery: req.query.deliveryId,
+          status,
+        })
+          .populate("delivery")
+          .populate("user")
+      : await QuickOrder.find({
+          delivery: req.query.deliveryId,
+        })
+          .populate("delivery")
+          .populate("user");
 
     let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
     let foundRecords = await Record.find({
@@ -226,12 +232,18 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
       });
     }
   } else {
-    let quickOrders = await QuickOrder.find({
-      delivery: null,
-      status,
-    })
-      .populate("delivery")
-      .populate("user");
+    let quickOrders = status
+      ? await QuickOrder.find({
+          delivery: null,
+          status,
+        })
+          .populate("delivery")
+          .populate("user")
+      : await QuickOrder.find({
+          delivery: null,
+        })
+          .populate("delivery")
+          .populate("user");
     let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
     let foundRecords = await Record.find({
       quickOrder: {
@@ -390,9 +402,9 @@ exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
   let { userId } = req.query;
   let status = req.query?.status;
 
-  let quickOrders = await QuickOrder.find({ user: userId, status }).populate(
-    "delivery"
-  );
+  let quickOrders = status
+    ? await QuickOrder.find({ user: userId, status }).populate("delivery")
+    : await QuickOrder.find({ user: userId }).populate("delivery");
   let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
 
   let foundRecords = await Record.find({
