@@ -41,7 +41,7 @@ const quickOrderSchema = new mongoose.Schema({
     type: Number,
   },
   withDeliveryTime: {
-    type: Number,
+    type: String,
   },
 });
 
