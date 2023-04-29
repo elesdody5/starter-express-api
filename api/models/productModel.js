@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
   },
   subCategory: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'SubCategory',
+    ref: "SubCategory",
   },
   shop: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Shop',
+    ref: "Shop",
   },
   price: {
     type: Number,
@@ -18,12 +18,9 @@ const productSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  sizes: [
-    {
-      type: Number
-    },
-  ],
-
+  sizes: {
+    type: String,
+  },
 });
-const Product = new mongoose.model('Product', productSchema);
+const Product = new mongoose.model("Product", productSchema);
 module.exports = Product;
