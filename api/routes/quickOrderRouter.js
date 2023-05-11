@@ -12,6 +12,7 @@ const {
   deleteMultipleQuickOrders,
   getQuickOrdersForUser,
   updateQuickOrders,
+  getQuickOrdersByStatus
   
 } = require("./../controllers/quickOrderController");
 
@@ -38,6 +39,13 @@ router.get(
   checkForIdExistenceAndValidityQuickOrder,
   getQuickOrderById
 );
+
+router.get(
+  "/quickOrder",
+  checkForIdExistenceAndValidityQuickOrder,
+  getQuickOrderById
+);
+router.get("/status",getQuickOrdersByStatus);
 
 router.delete("/deleteMany", deleteMultipleQuickOrders);
 router.patch("/updateMultipleQuickOrders",updateQuickOrders)

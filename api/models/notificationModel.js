@@ -11,6 +11,9 @@ const notificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  userType: {
+    type: String,
+  },
 });
 
 const Notification = new mongoose.model('Notification', notificationSchema);

@@ -6,7 +6,6 @@ const catchAsync = require("../utils/catchAsync");
 const ErrorMsgs = require("./../utils/ErrorMsgsConstants");
 const Record = require("../models/recordModel");
 const cloudinary = require("../utils/cloudinaryConfiguration");
-
 const { sendSingleNotificationUsingFCM } = require("../utils/sendNotification");
 const { handleUpdatingAndStoringElement } = require("../utils/firebaseStorage");
 
@@ -142,12 +141,11 @@ exports.updateQuickOrder = catchAsync(async (req, res, next) => {
   let { deliveryId, quickOrderId } = req.query;
   let quickOrder = await QuickOrder.findOne({ _id: quickOrderId });
 
-  let delivery = await User.findOne({_id: deliveryId});
+  let delivery = await User.findOne({ _id: deliveryId });
 
- 
-  if(deliveryId && delivery === null){
+  if (deliveryId && delivery === null) {
     return next(new AppError("لا يوجد مستخدم ", 400));
-  } 
+  }
 
   if (quickOrder.delivery) {
     if (deliveryId) {
@@ -165,12 +163,20 @@ exports.updateQuickOrder = catchAsync(async (req, res, next) => {
 //access PUBLIC
 //Note if we didnt pass deliveryId we will get all quickorders that are not assigned for delivery
 exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
+  let status = req.query?.status;
   if (req.query.deliveryId) {
-    let quickOrders = await QuickOrder.find({
-      delivery: req.query.deliveryId,
-    })
-      .populate("delivery")
-      .populate("user");
+    let quickOrders = status
+      ? await QuickOrder.find({
+          delivery: req.query.deliveryId,
+          status,
+        })
+          .populate("delivery")
+          .populate("user")
+      : await QuickOrder.find({
+          delivery: req.query.deliveryId,
+        })
+          .populate("delivery")
+          .populate("user");
 
     let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
     let foundRecords = await Record.find({
@@ -226,11 +232,18 @@ exports.getQuickOrdersForDelivery = catchAsync(async (req, res, next) => {
       });
     }
   } else {
-    let quickOrders = await QuickOrder.find({
-      delivery: null,
-    })
-      .populate("delivery")
-      .populate("user");
+    let quickOrders = status
+      ? await QuickOrder.find({
+          delivery: null,
+          status,
+        })
+          .populate("delivery")
+          .populate("user")
+      : await QuickOrder.find({
+          delivery: null,
+        })
+          .populate("delivery")
+          .populate("user");
     let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
     let foundRecords = await Record.find({
       quickOrder: {
@@ -387,10 +400,11 @@ exports.deleteMultipleQuickOrders = catchAsync(async (req, res, next) => {
 
 exports.getQuickOrdersForUser = catchAsync(async (req, res, next) => {
   let { userId } = req.query;
+  let status = req.query?.status;
 
-  let quickOrders = await QuickOrder.find({ user: userId }).populate(
-    "delivery"
-  );
+  let quickOrders = status
+    ? await QuickOrder.find({ user: userId, status }).populate("delivery")
+    : await QuickOrder.find({ user: userId }).populate("delivery");
   let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
 
   let foundRecords = await Record.find({
@@ -460,20 +474,79 @@ exports.updateQuickOrders = catchAsync(async (req, res, next) => {
     return next(new AppError("من فضلك ادخل الاوردرات صحيحا", 400));
   }
   let { quickOrders } = req.body;
-  
 
-
-await QuickOrder.updateMany(
+  await QuickOrder.updateMany(
     {
       _id: {
         $in: quickOrders,
-      }
+      },
     },
     {
-      $set: req.query
+      $set: req.query,
     }
   );
   res.status(200).json({
     status: "success",
   });
+});
+
+//@desc Get quick orders by status by passing status of the quickOrder as a query param
+//@route GET /api/v1/quickOrders/status
+//access PUBLIC
+exports.getQuickOrdersByStatus = catchAsync(async (req, res, next) => {
+  let quickOrders = await QuickOrder.find({ status: req.query.status })
+    .populate("user")
+    .populate("delivery");
+
+  let quickOrderIds = quickOrders.map((quickOrder) => quickOrder._id);
+  let foundRecords = await Record.find({
+    quickOrder: {
+      $in: quickOrderIds,
+    },
+  });
+  let data = [];
+  quickOrders.map((quickOrder) => {
+    for (let i = 0; i < foundRecords.length; i++) {
+      if (String(quickOrder._id) === String(foundRecords[i].quickOrder)) {
+        data.push({
+          ...quickOrder._doc,
+          audio: foundRecords[i].audio,
+        });
+      }
+    }
+  });
+  if (foundRecords.length === 0) {
+    res.status(200).json({
+      status: "success",
+      data: quickOrders,
+    });
+  } else {
+    quickOrders.map((quickOrder) => {
+      foundRecords.forEach((foundRecord) => {
+        if (String(quickOrder._id) === String(foundRecord.quickOrder)) {
+          data.push({ ...quickOrder._doc, audio: foundRecord.audio });
+        } else {
+          data.push({ ...quickOrder._doc });
+        }
+      });
+    });
+    const uniqueElements = [];
+    let filteredData = data.filter((element) => {
+      const isDuplicate = uniqueElements.includes(element._id);
+
+      if (!isDuplicate) {
+        uniqueElements.push(element._id);
+
+        return true;
+      }
+
+      return false;
+    });
+    res.status(200).json({
+      status: "success",
+      data: filteredData.sort(function (a, b) {
+        return new Date(b.date) - new Date(a.date);
+      }),
+    });
+  }
 });

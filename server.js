@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "development") {
     })
     .then((con) => {
       console.log("connected successfully with local DB");
-      db = con.connection.db;
+      let db = con.connection.db;
     });
 } else {
   mongoose

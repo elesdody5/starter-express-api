@@ -3,7 +3,8 @@ const Notification = require('./../models/notificationModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllNotifications = catchAsync(async (req, res, next) => {
-  let notifications = await Notification.find();
+  let userType = req.query.userType
+  let notifications = await Notification.find({userType});
   res.status(200).json({
     status: 'success',
     notifications,

@@ -37,6 +37,12 @@ const quickOrderSchema = new mongoose.Schema({
     default: Date.now(),
   },
   photo: { type: String },
+  price: {
+    type: Number,
+  },
+  withDeliveryTime: {
+    type: String,
+  },
 });
 
 const QuickOrder = new mongoose.model("QuickOrder", quickOrderSchema);

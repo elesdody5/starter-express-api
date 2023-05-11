@@ -8,17 +8,16 @@ const Favorite = require("../models/favoriteModel");
 const ErrorMsgs = require("../utils/ErrorMsgsConstants");
 const { bucket } = require("../utils/firebaseConfiguration");
 const dotenv = require("dotenv").config;
-const twilio = require("twilio");
 
 const client = require("twilio")(process.env.accountSID, process.env.authToken);
 
-signToken = (id) => {
+const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
-createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, res) => {
   //Creating a token by signing it with the payload of the newley created user and a secret
   const token = signToken(user._id);
 

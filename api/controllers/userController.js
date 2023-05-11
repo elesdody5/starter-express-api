@@ -228,12 +228,11 @@ exports.deleteUserById = catchAsync(async (req, res, next) => {
 //@route Delete /api/v1/users/notifyAllUsers
 //access PUBLIC
 exports.notifyAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find({ userType: "user" });
-  const vendors = await User.find({ userType: "vendor" });
+  let userType = req.query.userType;
+  const users = await User.find({ userType });
 
-  let data = [...users,...vendors]
-
-  const userRegistrationTokens = data
+  // let data = [...users,...vendors]
+  const userRegistrationTokens = users
     .map((user) => user.notificationToken)
     .filter((token) => token);
 
@@ -246,7 +245,7 @@ exports.notifyAllUsers = catchAsync(async (req, res, next) => {
     }
   }
 
-  await Notification.create(req.body);
+  await Notification.create({ ...req.body, userType });
   res.status(200).json({
     status: "success",
   });

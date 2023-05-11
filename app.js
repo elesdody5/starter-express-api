@@ -23,8 +23,6 @@ app.use(express.json());
 
 const globalErrorHandler = require("./api/controllers/errorController");
 
-//test
-//Implement cors and compression
 app.use(cors());
 
 app.options("*", cors());
@@ -47,11 +45,5 @@ app.all("*", (req, res, next) => {
   next(new AppError(`Cant find ${req.originalUrl} on the server`, 404));
 });
 app.use(globalErrorHandler);
-
-// app.get("*.js", function (req, res, next) {
-//   req.url = req.url + ".gz";
-//   res.set("Content-Encoding", "gzip");
-//   next();
-// });
 
 module.exports = app;
